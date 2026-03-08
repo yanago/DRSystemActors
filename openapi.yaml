@@ -1,0 +1,396 @@
+openapi: 3.0.3
+info:
+  title: Replay / DR API
+  description: REST API for replay and disaster-recovery job management. Create jobs, control lifecycle (start/pause/resume/cancel), and monitor progress and metrics.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local default
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      operationId: getHealth
+      tags: [Health]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+  /api/v1/replay/jobs:
+    get:
+      summary: List all replay jobs
+      operationId: listJobs
+      tags: [Jobs]
+      responses:
+        '200':
+          description: List of replay jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReplayJob'
+    post:
+      summary: Create a new replay job
+      operationId: createJob
+      tags: [Jobs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReplayJobRequest'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateReplayJobResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+
+  /api/v1/replay/jobs/{jobId}:
+    get:
+      summary: Get job by ID
+      operationId: getJob
+      tags: [Jobs]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayJob'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/status:
+    get:
+      summary: Get job progress and status
+      operationId: getJobStatus
+      tags: [Jobs]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Current status and progress
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatusResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/metrics:
+    get:
+      summary: Get job metrics (throughput, latency, errors)
+      operationId: getJobMetrics
+      tags: [Jobs]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Aggregated metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobMetricsResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/start:
+    post:
+      summary: Start a job
+      operationId: startJob
+      tags: [Lifecycle]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifecycleCommandResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/pause:
+    post:
+      summary: Pause a running job
+      operationId: pauseJob
+      tags: [Lifecycle]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifecycleCommandResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/resume:
+    post:
+      summary: Resume a paused job
+      operationId: resumeJob
+      tags: [Lifecycle]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifecycleCommandResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/replay/jobs/{jobId}/cancel:
+    post:
+      summary: Cancel a job
+      operationId: cancelJob
+      tags: [Lifecycle]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Command accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LifecycleCommandResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    CreateReplayJobRequest:
+      type: object
+      required: [name, parameters]
+      properties:
+        name:
+          type: string
+          description: Human-readable job name
+        parameters:
+          type: object
+          description: Job parameters (must include "source"). May include total_count, batch_size, destination, kafka_topic, rest_url, partition_aware, worker_count, etc.
+          additionalProperties: true
+      example:
+        name: my-replay
+        parameters:
+          source: simulated
+          total_count: 1000
+          batch_size: 100
+          destination: rest
+
+    CreateReplayJobResponse:
+      type: object
+      required: [job_id, status]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: PENDING
+
+    ReplayJob:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, RUNNING, PAUSED, COMPLETED, FAILED, CANCELLED]
+        parameters:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        message:
+          type: string
+          nullable: true
+
+    JobStatusResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, RUNNING, PAUSED, COMPLETED, FAILED, CANCELLED]
+        progress:
+          type: object
+          properties:
+            events_processed:
+              type: integer
+              format: int64
+            started_at:
+              type: string
+              format: date-time
+            last_activity_at:
+              type: string
+              format: date-time
+
+    JobMetricsResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        status:
+          type: string
+        metrics:
+          type: object
+          properties:
+            events_per_second:
+              type: number
+              format: double
+            latency_ms_avg:
+              type: number
+              format: double
+            error_count:
+              type: integer
+              format: int64
+
+    LifecycleCommandResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        command:
+          type: string
+          enum: [start, pause, resume, cancel]
+        status:
+          type: string
+          example: accepted
+
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        job_id:
+          type: string
+
+tags:
+  - name: Health
+    description: Health and readiness
+  - name: Jobs
+    description: Job CRUD and monitoring
+  - name: Lifecycle
+    description: Start, pause, resume, cancel
