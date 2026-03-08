@@ -1,0 +1,18 @@
+package com.example.replay.storage;
+
+import com.example.replay.model.ReplayJob;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Persistence for replay jobs. In-memory implementation now; replace with PostgreSQL later.
+ */
+public interface ReplayJobRepository {
+
+    ReplayJob save(ReplayJob job);
+
+    Optional<ReplayJob> findById(String jobId);
+
+    List<ReplayJob> findAll();
+}

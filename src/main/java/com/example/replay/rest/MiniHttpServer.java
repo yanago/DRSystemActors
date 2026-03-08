@@ -1,5 +1,8 @@
 package com.example.replay.rest;
 
+import com.example.replay.storage.InMemoryReplayJobRepository;
+import com.example.replay.storage.ReplayJobRepository;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,18 +14,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Minimal HTTP server using raw sockets. Serves GET /health and POST /api/v1/replay/jobs.
+ * Minimal HTTP server using raw sockets. Serves GET /health, POST/GET /api/v1/replay/jobs, GET /api/v1/replay/jobs/{id}.
  */
 public final class MiniHttpServer implements Runnable, AutoCloseable {
 
     private static final String HEALTH_PATH = "/health";
     private static final String REPLAY_JOBS_PATH = "/api/v1/replay/jobs";
+    private static final String REPLAY_JOBS_PATH_PREFIX = REPLAY_JOBS_PATH + "/";
     private static final String RESPONSE_OK = "OK";
     private static final String CRLF = "\r\n";
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final String APPLICATION_JSON = "application/json; charset=UTF-8";
 
     private final int port;
+    private final ReplayJobRepository jobRepository;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private volatile ServerSocket serverSocket;
     private final ExecutorService acceptor = Executors.newSingleThreadExecutor(r -> {
@@ -37,7 +42,12 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
     });
 
     public MiniHttpServer(int port) {
+        this(port, new InMemoryReplayJobRepository());
+    }
+
+    public MiniHttpServer(int port, ReplayJobRepository jobRepository) {
         this.port = port;
+        this.jobRepository = jobRepository;
     }
 
     public void start() throws IOException {
@@ -116,10 +126,25 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
                 sendResponse(out, 200, RESPONSE_OK, false);
                 return;
             }
-            if ("POST".equalsIgnoreCase(method) && REPLAY_JOBS_PATH.equals(path)) {
-                ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleCreateJob(body);
-                sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
-                return;
+            if (REPLAY_JOBS_PATH.equals(path)) {
+                if ("POST".equalsIgnoreCase(method)) {
+                    ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleCreateJob(jobRepository, body);
+                    sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                    return;
+                }
+                if ("GET".equalsIgnoreCase(method)) {
+                    ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleListJobs(jobRepository);
+                    sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                    return;
+                }
+            }
+            if ("GET".equalsIgnoreCase(method) && path.startsWith(REPLAY_JOBS_PATH_PREFIX)) {
+                String jobId = path.substring(REPLAY_JOBS_PATH_PREFIX.length()).trim();
+                if (!jobId.isEmpty() && !jobId.contains("/")) {
+                    ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleGetJob(jobRepository, jobId);
+                    sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                    return;
+                }
             }
             sendResponse(out, 404, "Not Found", false);
         } catch (IOException e) {
