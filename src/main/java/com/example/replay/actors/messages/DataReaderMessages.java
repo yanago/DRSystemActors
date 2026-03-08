@@ -27,6 +27,10 @@ public final class DataReaderMessages {
     public record StopReading() {
     }
 
+    /** Internal: trigger reading the next batch (sent by reader to self for streaming). */
+    public record ReadNextBatch() {
+    }
+
     /** Result: batch of records read (payload is opaque for the pipeline). */
     public record BatchRead(String jobId, List<Object> records, boolean lastBatch) {
     }

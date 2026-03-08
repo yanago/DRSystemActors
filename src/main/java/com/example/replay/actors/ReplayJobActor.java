@@ -54,6 +54,7 @@ public final class ReplayJobActor extends AbstractActor {
                 .match(ReplayJobActorMessages.Cancel.class, this::onCancel)
                 .match(ReplayJobActorMessages.GetStatus.class, this::onGetStatus)
                 .match(DataReaderMessages.BatchRead.class, this::onBatchRead)
+                .match(DataEmitterMessages.BatchEmitted.class, msg -> { /* ack from emitter; optional back-pressure */ })
                 .matchAny(msg -> log.warning("Unhandled message: {}", msg))
                 .build();
     }
