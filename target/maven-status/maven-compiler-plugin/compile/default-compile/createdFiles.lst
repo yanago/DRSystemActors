@@ -2,6 +2,7 @@ com/example/replay/storage/ReplayJobRepository.class
 com/example/replay/api/package-info.class
 com/example/replay/actors/messages/DataReaderMessages$BatchRead.class
 com/example/replay/actors/messages/JobManagerMessages$GetJobStatus.class
+com/example/replay/actors/messages/JobManagerMessages$CommandAccepted.class
 com/example/replay/storage/PostgresReplayJobRepository.class
 com/example/replay/storage/PostgresReplayJobRepository$1.class
 com/example/replay/actors/messages/JobManagerMessages$ListJobs.class
@@ -24,6 +25,7 @@ com/example/replay/api/CreateReplayJobValidator.class
 com/example/replay/actors/messages/package-info.class
 com/example/replay/model/ReplayJob$ReplayJobStatus.class
 com/example/replay/actors/messages/ReplayJobActorMessages$GetStatus.class
+com/example/replay/actors/messages/JobManagerMessages$JobNotFound.class
 com/example/replay/actors/messages/DataReaderMessages$PauseReading.class
 com/example/replay/rest/MiniHttpServer.class
 com/example/replay/util/JsonUtil.class

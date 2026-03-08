@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.example.replay.rest.MiniHttpServerTest" time="0.19" tests="10" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.example.replay.rest.MiniHttpServerTest" time="0.82" tests="14" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,9 +13,10 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/vaskoyordanov/DRSystemActors/target/surefire/surefirebooter-20260308163008580_3.jar /Users/vaskoyordanov/DRSystemActors/target/surefire 2026-03-08T16-30-08_532-jvmRun1 surefire-20260308163008580_1tmp surefire_0-20260308163008580_2tmp"/>
+    <property name="sun.java.command" value="/Users/vaskoyordanov/DRSystemActors/target/surefire/surefirebooter-20260308165611328_3.jar /Users/vaskoyordanov/DRSystemActors/target/surefire 2026-03-08T16-56-11_286-jvmRun1 surefire-20260308165611328_1tmp surefire_0-20260308165611328_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
+    <property name="test" value="MiniHttpServerTest"/>
     <property name="surefire.test.class.path" value="/Users/vaskoyordanov/DRSystemActors/target/test-classes:/Users/vaskoyordanov/DRSystemActors/target/classes:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor_3/1.1.2/pekko-actor_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/scala-lang/scala3-library_3/3.3.3/scala3-library_3-3.3.3.jar:/Users/vaskoyordanov/.m2/repository/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar:/Users/vaskoyordanov/.m2/repository/com/typesafe/config/1.4.3/config-1.4.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-stream_3/1.1.2/pekko-stream_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-protobuf-v3_3/1.1.2/pekko-protobuf-v3_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar:/Users/vaskoyordanov/.m2/repository/com/typesafe/ssl-config-core_3/0.6.1/ssl-config-core_3-0.6.1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http_3/1.0.1/pekko-http_3-1.0.1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http-core_3/1.0.1/pekko-http-core_3-1.0.1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-parsing_3/1.0.1/pekko-parsing_3-1.0.1.jar:/Users/vaskoyordanov/.m2/repository/org/parboiled/parboiled_3/2.5.0/parboiled_3-2.5.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http-jackson_3/1.0.1/pekko-http-jackson_3-1.0.1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-slf4j_3/1.1.2/pekko-slf4j_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.17.2/jackson-databind-2.17.2.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.2/jackson-core-2.17.2.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.17.2/jackson-annotations-2.17.2.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.17.2/jackson-datatype-jsr310-2.17.2.jar:/Users/vaskoyordanov/.m2/repository/org/postgresql/postgresql/42.7.3/postgresql-42.7.3.jar:/Users/vaskoyordanov/.m2/repository/org/checkerframework/checker-qual/3.42.0/checker-qual-3.42.0.jar:/Users/vaskoyordanov/.m2/repository/com/zaxxer/HikariCP/5.1.0/HikariCP-5.1.0.jar:/Users/vaskoyordanov/.m2/repository/org/flywaydb/flyway-core/10.22.0/flyway-core-10.22.0.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/dataformat/jackson-dataformat-toml/2.15.2/jackson-dataformat-toml-2.15.2.jar:/Users/vaskoyordanov/.m2/repository/org/flywaydb/flyway-database-postgresql/10.22.0/flyway-database-postgresql-10.22.0.jar:/Users/vaskoyordanov/.m2/repository/io/delta/delta-kernel-api/4.0.0/delta-kernel-api-4.0.0.jar:/Users/vaskoyordanov/.m2/repository/org/roaringbitmap/RoaringBitmap/0.9.25/RoaringBitmap-0.9.25.jar:/Users/vaskoyordanov/.m2/repository/org/roaringbitmap/shims/0.9.25/shims-0.9.25.jar:/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.13.5/jackson-datatype-jdk8-2.13.5.jar:/Users/vaskoyordanov/.m2/repository/io/delta/delta-kernel-defaults/4.0.0/delta-kernel-defaults-4.0.0.jar:/Users/vaskoyordanov/.m2/repository/io/delta/delta-storage/4.0.0/delta-storage-4.0.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/hadoop/hadoop-client-runtime/3.4.0/hadoop-client-runtime-3.4.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/hadoop/hadoop-client-api/3.4.0/hadoop-client-api-3.4.0.jar:/Users/vaskoyordanov/.m2/repository/org/xerial/snappy/snappy-java/1.1.10.4/snappy-java-1.1.10.4.jar:/Users/vaskoyordanov/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/Users/vaskoyordanov/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-hadoop/1.12.3/parquet-hadoop-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-column/1.12.3/parquet-column-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-encoding/1.12.3/parquet-encoding-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-format-structures/1.12.3/parquet-format-structures-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-common/1.12.3/parquet-common-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/parquet/parquet-jackson/1.12.3/parquet-jackson-1.12.3.jar:/Users/vaskoyordanov/.m2/repository/commons-pool/commons-pool/1.6/commons-pool-1.6.jar:/Users/vaskoyordanov/.m2/repository/com/github/luben/zstd-jni/1.5.0-1/zstd-jni-1.5.0-1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/yetus/audience-annotations/0.13.0/audience-annotations-0.13.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/iceberg/iceberg-api/1.7.0/iceberg-api-1.7.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/iceberg/iceberg-bundled-guava/1.7.0/iceberg-bundled-guava-1.7.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/iceberg/iceberg-core/1.7.0/iceberg-core-1.7.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/avro/avro/1.12.0/avro-1.12.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/commons/commons-compress/1.26.2/commons-compress-1.26.2.jar:/Users/vaskoyordanov/.m2/repository/commons-codec/commons-codec/1.17.0/commons-codec-1.17.0.jar:/Users/vaskoyordanov/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar:/Users/vaskoyordanov/.m2/repository/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/iceberg/iceberg-common/1.7.0/iceberg-common-1.7.0.jar:/Users/vaskoyordanov/.m2/repository/io/airlift/aircompressor/0.27/aircompressor-0.27.jar:/Users/vaskoyordanov/.m2/repository/org/apache/httpcomponents/client5/httpclient5/5.4/httpclient5-5.4.jar:/Users/vaskoyordanov/.m2/repository/org/apache/httpcomponents/core5/httpcore5/5.3/httpcore5-5.3.jar:/Users/vaskoyordanov/.m2/repository/org/apache/httpcomponents/core5/httpcore5-h2/5.3/httpcore5-h2-5.3.jar:/Users/vaskoyordanov/.m2/repository/com/github/ben-manes/caffeine/caffeine/2.9.3/caffeine-2.9.3.jar:/Users/vaskoyordanov/.m2/repository/com/google/errorprone/error_prone_annotations/2.10.0/error_prone_annotations-2.10.0.jar:/Users/vaskoyordanov/.m2/repository/dev/failsafe/failsafe/3.3.2/failsafe-3.3.2.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-connectors-kafka_3/1.1.0/pekko-connectors-kafka_3-1.1.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/kafka/kafka-clients/3.8.0/kafka-clients-3.8.0.jar:/Users/vaskoyordanov/.m2/repository/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-testkit_3/1.1.2/pekko-testkit_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-stream-testkit_3/1.1.2/pekko-stream-testkit_3-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http-testkit_3/1.0.1/pekko-http-testkit_3-1.0.1.jar:/Users/vaskoyordanov/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/vaskoyordanov/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/vaskoyordanov/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:/Users/vaskoyordanov/.m2/repository/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.jar:/Users/vaskoyordanov/.m2/repository/net/bytebuddy/byte-buddy/1.15.4/byte-buddy-1.15.4.jar:/Users/vaskoyordanov/.m2/repository/net/bytebuddy/byte-buddy-agent/1.15.4/byte-buddy-agent-1.15.4.jar:/Users/vaskoyordanov/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/vaskoyordanov/.m2/repository/org/mockito/mockito-junit-jupiter/5.14.2/mockito-junit-jupiter-5.14.2.jar:/Users/vaskoyordanov/.m2/repository/org/testcontainers/junit-jupiter/1.19.8/junit-jupiter-1.19.8.jar:/Users/vaskoyordanov/.m2/repository/org/testcontainers/testcontainers/1.19.8/testcontainers-1.19.8.jar:/Users/vaskoyordanov/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/vaskoyordanov/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/Users/vaskoyordanov/.m2/repository/org/rnorth/duct-tape/duct-tape/1.0.8/duct-tape-1.0.8.jar:/Users/vaskoyordanov/.m2/repository/org/jetbrains/annotations/17.0.0/annotations-17.0.0.jar:/Users/vaskoyordanov/.m2/repository/com/github/docker-java/docker-java-api/3.3.6/docker-java-api-3.3.6.jar:/Users/vaskoyordanov/.m2/repository/com/github/docker-java/docker-java-transport-zerodep/3.3.6/docker-java-transport-zerodep-3.3.6.jar:/Users/vaskoyordanov/.m2/repository/com/github/docker-java/docker-java-transport/3.3.6/docker-java-transport-3.3.6.jar:/Users/vaskoyordanov/.m2/repository/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar:/Users/vaskoyordanov/.m2/repository/org/testcontainers/postgresql/1.19.8/postgresql-1.19.8.jar:/Users/vaskoyordanov/.m2/repository/org/testcontainers/jdbc/1.19.8/jdbc-1.19.8.jar:/Users/vaskoyordanov/.m2/repository/org/testcontainers/database-commons/1.19.8/database-commons-1.19.8.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/Users/vaskoyordanov"/>
@@ -30,7 +31,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/vaskoyordanov/DRSystemActors/target/surefire/surefirebooter-20260308163008580_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/vaskoyordanov/DRSystemActors/target/surefire/surefirebooter-20260308165611328_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="23.0.2"/>
@@ -59,14 +60,84 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="getReplayJobsReturnsCreatedJobs" classname="com.example.replay.rest.MiniHttpServerTest" time="0.159"/>
-  <testcase name="postReplayJobsWithInvalidJsonReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.005"/>
-  <testcase name="postReplayJobsWithMissingNameReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.003"/>
-  <testcase name="getReplayJobsReturns200AndJsonArray" classname="com.example.replay.rest.MiniHttpServerTest" time="0.002"/>
-  <testcase name="otherPathsReturn404" classname="com.example.replay.rest.MiniHttpServerTest" time="0.003"/>
-  <testcase name="getReplayJobByIdReturns404WhenNotExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.003"/>
-  <testcase name="postReplayJobsCreatesJobAndReturns201WithJobId" classname="com.example.replay.rest.MiniHttpServerTest" time="0.003"/>
-  <testcase name="healthReturnsOk" classname="com.example.replay.rest.MiniHttpServerTest" time="0.002"/>
-  <testcase name="postReplayJobsWithMissingSourceParamReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.003"/>
-  <testcase name="getReplayJobByIdReturns200WhenExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.004"/>
+  <testcase name="getReplayJobsReturnsCreatedJobs" classname="com.example.replay.rest.MiniHttpServerTest" time="0.605">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.236] [ReplayServer-pekko.actor.default-dispatcher-5] [pekko://ReplayServer/user/jobManager] Job [6acdec91-f564-480f-8049-12744aef0efb] created and started
+[INFO] [03/08/2026 16:56:12.238] [ReplayServer-pekko.actor.default-dispatcher-4] [pekko://ReplayServer/user/jobManager/6acdec91-f564-480f-8049-12744aef0efb] Job [6acdec91-f564-480f-8049-12744aef0efb] started
+[INFO] [03/08/2026 16:56:12.239] [ReplayServer-pekko.actor.default-dispatcher-5] [pekko://ReplayServer/user/jobManager/6acdec91-f564-480f-8049-12744aef0efb/reader] DataReader [6acdec91-f564-480f-8049-12744aef0efb] started with config: [name, source]
+[INFO] [03/08/2026 16:56:12.259] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postJobLifecycleReturns404WhenJobNotExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.021">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.287] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postReplayJobsWithInvalidJsonReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.018">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.306] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postReplayJobsWithMissingNameReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.015">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.321] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="getReplayJobsReturns200AndJsonArray" classname="com.example.replay.rest.MiniHttpServerTest" time="0.015">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.336] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="otherPathsReturn404" classname="com.example.replay.rest.MiniHttpServerTest" time="0.014">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.350] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postJobCancelReturns200WhenJobExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.021">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.368] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager] Job [58c7a36a-89e5-4b70-85a7-08449dcce51d] created and started
+[INFO] [03/08/2026 16:56:12.368] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d] Job [58c7a36a-89e5-4b70-85a7-08449dcce51d] started
+[INFO] [03/08/2026 16:56:12.368] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d/reader] DataReader [58c7a36a-89e5-4b70-85a7-08449dcce51d] started with config: [name, source]
+[INFO] [03/08/2026 16:56:12.370] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d] Job [58c7a36a-89e5-4b70-85a7-08449dcce51d] cancelled
+[INFO] [03/08/2026 16:56:12.370] [ReplayServer-pekko.actor.default-dispatcher-11] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d/reader] DataReader [58c7a36a-89e5-4b70-85a7-08449dcce51d] stopped
+[INFO] [03/08/2026 16:56:12.370] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d/emitter] DataEmitter [58c7a36a-89e5-4b70-85a7-08449dcce51d] stopped
+[INFO] [03/08/2026 16:56:12.370] [ReplayServer-pekko.actor.default-dispatcher-11] [pekko://ReplayServer/user/jobManager/58c7a36a-89e5-4b70-85a7-08449dcce51d/emitter] DataEmitter [58c7a36a-89e5-4b70-85a7-08449dcce51d] stopped
+[INFO] [03/08/2026 16:56:12.372] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postJobPauseReturns200WhenJobExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.015">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.384] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager] Job [938600e2-11ed-47c6-87b9-f59200b5c23f] created and started
+[INFO] [03/08/2026 16:56:12.384] [ReplayServer-pekko.actor.default-dispatcher-5] [pekko://ReplayServer/user/jobManager/938600e2-11ed-47c6-87b9-f59200b5c23f] Job [938600e2-11ed-47c6-87b9-f59200b5c23f] started
+[INFO] [03/08/2026 16:56:12.384] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager/938600e2-11ed-47c6-87b9-f59200b5c23f/reader] DataReader [938600e2-11ed-47c6-87b9-f59200b5c23f] started with config: [name, source]
+[INFO] [03/08/2026 16:56:12.386] [ReplayServer-pekko.actor.default-dispatcher-8] [pekko://ReplayServer/user/jobManager/938600e2-11ed-47c6-87b9-f59200b5c23f] Job [938600e2-11ed-47c6-87b9-f59200b5c23f] paused
+[INFO] [03/08/2026 16:56:12.386] [ReplayServer-pekko.actor.default-dispatcher-5] [pekko://ReplayServer/user/jobManager/938600e2-11ed-47c6-87b9-f59200b5c23f/reader] DataReader [938600e2-11ed-47c6-87b9-f59200b5c23f] paused
+[INFO] [03/08/2026 16:56:12.387] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postJobStartReturns200WhenJobExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.014">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.400] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager] Job [52455bcb-716c-4931-b538-74bc1aaecf22] created and started
+[INFO] [03/08/2026 16:56:12.400] [ReplayServer-pekko.actor.default-dispatcher-8] [pekko://ReplayServer/user/jobManager/52455bcb-716c-4931-b538-74bc1aaecf22] Job [52455bcb-716c-4931-b538-74bc1aaecf22] started
+[INFO] [03/08/2026 16:56:12.400] [ReplayServer-pekko.actor.default-dispatcher-9] [pekko://ReplayServer/user/jobManager/52455bcb-716c-4931-b538-74bc1aaecf22/reader] DataReader [52455bcb-716c-4931-b538-74bc1aaecf22] started with config: [name, source]
+[INFO] [03/08/2026 16:56:12.402] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="getReplayJobByIdReturns404WhenNotExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.013">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.415] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postReplayJobsCreatesJobAndReturns201WithJobId" classname="com.example.replay.rest.MiniHttpServerTest" time="0.015">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.429] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager] Job [7354283b-e1f8-4dbc-8c97-0b3d79237db6] created and started
+[INFO] [03/08/2026 16:56:12.430] [ReplayServer-pekko.actor.default-dispatcher-5] [pekko://ReplayServer/user/jobManager/7354283b-e1f8-4dbc-8c97-0b3d79237db6] Job [7354283b-e1f8-4dbc-8c97-0b3d79237db6] started
+[INFO] [03/08/2026 16:56:12.430] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager/7354283b-e1f8-4dbc-8c97-0b3d79237db6/reader] DataReader [7354283b-e1f8-4dbc-8c97-0b3d79237db6] started with config: [name, target, source]
+[INFO] [03/08/2026 16:56:12.431] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="healthReturnsOk" classname="com.example.replay.rest.MiniHttpServerTest" time="0.012">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.442] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="postReplayJobsWithMissingSourceParamReturns400" classname="com.example.replay.rest.MiniHttpServerTest" time="0.012">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.455] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
+  <testcase name="getReplayJobByIdReturns200WhenExists" classname="com.example.replay.rest.MiniHttpServerTest" time="0.013">
+    <system-out><![CDATA[[INFO] [03/08/2026 16:56:12.466] [ReplayServer-pekko.actor.default-dispatcher-7] [pekko://ReplayServer/user/jobManager] Job [1371efb3-2afa-4e9f-813f-3a8e1927a6ba] created and started
+[INFO] [03/08/2026 16:56:12.467] [ReplayServer-pekko.actor.default-dispatcher-6] [pekko://ReplayServer/user/jobManager/1371efb3-2afa-4e9f-813f-3a8e1927a6ba] Job [1371efb3-2afa-4e9f-813f-3a8e1927a6ba] started
+[INFO] [03/08/2026 16:56:12.467] [ReplayServer-pekko.actor.default-dispatcher-8] [pekko://ReplayServer/user/jobManager/1371efb3-2afa-4e9f-813f-3a8e1927a6ba/reader] DataReader [1371efb3-2afa-4e9f-813f-3a8e1927a6ba] started with config: [name, source]
+[INFO] [03/08/2026 16:56:12.469] [main] [CoordinatedShutdown(pekko://ReplayServer)] Running CoordinatedShutdown with reason [ActorSystemTerminateReason]
+]]></system-out>
+  </testcase>
 </testsuite>
