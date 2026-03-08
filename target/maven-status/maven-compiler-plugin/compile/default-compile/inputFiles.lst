@@ -14,6 +14,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/CreateReplayJobRequest.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/CreateReplayJobResponse.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/CreateReplayJobValidator.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/EventDestination.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/EventDestinationFactory.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/ValidationResult.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/EventBatch.java
@@ -29,6 +31,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/WorkPacket.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/WorkPacketFactory.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/CustomerPartitionKey.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/KafkaEventDestination.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/ReplayJob.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/SecurityEvent.java
@@ -36,6 +40,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/ReplayJobHandler.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/RestEventDestination.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/SimulatedRestDestination.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/DataSourceConfig.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/InMemoryReplayJobRepository.java

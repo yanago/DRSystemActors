@@ -1,3 +1,5 @@
+com/example/replay/kafka/CustomerPartitionKeyTest.class
+com/example/replay/api/EventDestinationFactoryTest.class
 com/example/replay/datalake/WorkPacketFactoryTest.class
 com/example/replay/util/JsonUtilTest.class
 com/example/replay/actors/JobManagerTest.class
