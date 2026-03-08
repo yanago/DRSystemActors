@@ -13,6 +13,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/ReplayJobHandler.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/InMemoryReplayJobRepository.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/ReplayJobRepository.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/util/JsonUtil.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/util/package-info.java

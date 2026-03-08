@@ -1,3 +1,4 @@
+com/example/replay/storage/ReplayJobRepository.class
 com/example/replay/kafka/package-info.class
 com/example/replay/package-info.class
 com/example/replay/model/SecurityEvent.class
@@ -18,3 +19,4 @@ com/example/replay/rest/MiniHttpServer.class
 com/example/replay/util/JsonUtil.class
 com/example/replay/rest/ReplayJobHandler$HttpResponse.class
 com/example/replay/model/ReplayJob.class
+com/example/replay/storage/InMemoryReplayJobRepository.class
