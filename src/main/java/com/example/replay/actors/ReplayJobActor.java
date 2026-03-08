@@ -209,6 +209,9 @@ public final class ReplayJobActor extends AbstractActor {
     }
 
     private void onBatchRead(DataReaderMessages.BatchRead msg) {
+        if (status == ReplayJob.ReplayJobStatus.RUNNING && msg.records() != null && !msg.records().isEmpty()) {
+            emitterRef.tell(new DataEmitterMessages.EmitBatch(jobId, msg.records()), getSelf());
+        }
         if (msg.lastBatch()) {
             if (status != ReplayJob.ReplayJobStatus.CANCELLED && status != ReplayJob.ReplayJobStatus.FAILED) {
                 status = ReplayJob.ReplayJobStatus.COMPLETED;
@@ -216,10 +219,6 @@ public final class ReplayJobActor extends AbstractActor {
             }
             saveJob();
             emitterRef.tell(new DataEmitterMessages.StopEmitting(), getSelf());
-            return;
-        }
-        if (status == ReplayJob.ReplayJobStatus.RUNNING && msg.records() != null && !msg.records().isEmpty()) {
-            emitterRef.tell(new DataEmitterMessages.EmitBatch(jobId, msg.records()), getSelf());
         }
     }
 
