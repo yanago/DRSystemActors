@@ -31,7 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Minimal HTTP server using raw sockets. Serves GET /health, POST/GET /api/v1/replay/jobs, GET /api/v1/replay/jobs/{id}.
+ * Minimal HTTP server using raw sockets. Serves GET /health, POST/GET /api/v1/replay/jobs, GET /api/v1/replay/jobs/{id},
+ * GET /api/v1/replay/jobs/{id}/status (progress), GET /api/v1/replay/jobs/{id}/metrics (throughput, latency, errors).
  */
 public final class MiniHttpServer implements Runnable, AutoCloseable {
 
@@ -184,6 +185,23 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
                         return;
                     }
                 }
+                if ("GET".equalsIgnoreCase(method)) {
+                    int slash = suffix.indexOf('/');
+                    if (slash > 0) {
+                        String jobId = suffix.substring(0, slash).trim();
+                        String sub = suffix.substring(slash + 1).trim();
+                        if ("status".equalsIgnoreCase(sub) && !jobId.isEmpty()) {
+                            ReplayJobHandler.HttpResponse apiResponse = handleGetJobStatus(jobId);
+                            sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                            return;
+                        }
+                        if ("metrics".equalsIgnoreCase(sub) && !jobId.isEmpty()) {
+                            ReplayJobHandler.HttpResponse apiResponse = handleGetJobMetrics(jobId);
+                            sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                            return;
+                        }
+                    }
+                }
                 if ("POST".equalsIgnoreCase(method)) {
                     int slash = suffix.indexOf('/');
                     if (slash > 0) {
@@ -228,6 +246,66 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
             case "cancel" -> JobManagerMessages.JobLifecycleCommand.LifecycleCommand.CANCEL;
             default -> null;
         };
+    }
+
+    private ReplayJobHandler.HttpResponse handleGetJobStatus(String jobId) {
+        if (jobManager == null) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job manager not available\",\"job_id\":\"" + jobId + "\"}");
+        }
+        try {
+            CompletionStage<Object> stage = Patterns.ask(jobManager, new JobManagerMessages.GetJobStatus(jobId), ASK_TIMEOUT);
+            Object result = stage.toCompletableFuture().get(ASK_TIMEOUT.toMillis() + 500, TimeUnit.MILLISECONDS);
+            if (result instanceof JobManagerMessages.JobStatusResponse r) {
+                if (r.status() == null) {
+                    return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + jobId + "\"}");
+                }
+                Map<String, Object> body = new HashMap<>();
+                body.put("job_id", r.jobId());
+                body.put("status", r.status().name());
+                if (r.progress() != null) {
+                    Map<String, Object> progress = new HashMap<>();
+                    progress.put("events_processed", r.progress().getEventsProcessed());
+                    progress.put("started_at", r.progress().getStartedAt());
+                    progress.put("last_activity_at", r.progress().getLastActivityAt());
+                    body.put("progress", progress);
+                }
+                return ReplayJobHandler.HttpResponse.ok(JsonUtil.toJson(body));
+            }
+        } catch (Exception e) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Request failed\",\"job_id\":\"" + jobId + "\"}");
+        }
+        return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + jobId + "\"}");
+    }
+
+    private ReplayJobHandler.HttpResponse handleGetJobMetrics(String jobId) {
+        if (jobManager == null) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job manager not available\",\"job_id\":\"" + jobId + "\"}");
+        }
+        try {
+            CompletionStage<Object> stage = Patterns.ask(jobManager, new JobManagerMessages.GetJobStatus(jobId), ASK_TIMEOUT);
+            Object result = stage.toCompletableFuture().get(ASK_TIMEOUT.toMillis() + 500, TimeUnit.MILLISECONDS);
+            if (result instanceof JobManagerMessages.JobStatusResponse r) {
+                if (r.status() == null) {
+                    return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + jobId + "\"}");
+                }
+                Map<String, Object> body = new HashMap<>();
+                body.put("job_id", r.jobId());
+                body.put("status", r.status().name());
+                if (r.metrics() != null) {
+                    Map<String, Object> metrics = new HashMap<>();
+                    metrics.put("events_per_second", r.metrics().getEventsPerSecond());
+                    metrics.put("latency_ms_avg", r.metrics().getLatencyMsAvg());
+                    metrics.put("error_count", r.metrics().getErrorCount());
+                    body.put("metrics", metrics);
+                } else {
+                    body.put("metrics", Map.of("events_per_second", 0, "latency_ms_avg", 0, "error_count", 0));
+                }
+                return ReplayJobHandler.HttpResponse.ok(JsonUtil.toJson(body));
+            }
+        } catch (Exception e) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Request failed\",\"job_id\":\"" + jobId + "\"}");
+        }
+        return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + jobId + "\"}");
     }
 
     private ReplayJobHandler.HttpResponse handleLifecycleCommand(String jobId, JobManagerMessages.JobLifecycleCommand.LifecycleCommand command) {

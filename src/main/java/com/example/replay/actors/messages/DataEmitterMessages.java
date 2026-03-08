@@ -23,7 +23,14 @@ public final class DataEmitterMessages {
     public record StopEmitting() {
     }
 
-    /** Acknowledgement that batch was emitted (optional back-pressure). */
-    public record BatchEmitted(String jobId, int count) {
+    /** Acknowledgement that batch was emitted (count, latencyMs for metrics). */
+    public record BatchEmitted(String jobId, int count, long latencyMs) {
+        public BatchEmitted(String jobId, int count) {
+            this(jobId, count, 0L);
+        }
+    }
+
+    /** Batch send failed; count events that failed for error metrics. */
+    public record BatchEmitFailed(String jobId, int failedCount) {
     }
 }

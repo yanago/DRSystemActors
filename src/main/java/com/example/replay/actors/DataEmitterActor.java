@@ -71,19 +71,21 @@ public final class DataEmitterActor extends AbstractActor {
         if (stopped) return;
         List<Object> records = msg.records() != null ? msg.records() : List.of();
         if (records.isEmpty()) {
-            getSender().tell(new DataEmitterMessages.BatchEmitted(jobId, 0), getSelf());
+            getSender().tell(new DataEmitterMessages.BatchEmitted(jobId, 0, 0L), getSelf());
             return;
         }
         if (destination == null) {
             destination = EventDestinationFactory.create(Map.of());
         }
+        long startMs = System.currentTimeMillis();
         try {
             destination.sendBatch(records);
-            log.debug("DataEmitter [{}] emitted batch of {} records", jobId, records.size());
-            getSender().tell(new DataEmitterMessages.BatchEmitted(jobId, records.size()), getSelf());
+            long latencyMs = System.currentTimeMillis() - startMs;
+            log.debug("DataEmitter [{}] emitted batch of {} records in {} ms", jobId, records.size(), latencyMs);
+            getSender().tell(new DataEmitterMessages.BatchEmitted(jobId, records.size(), latencyMs), getSelf());
         } catch (Exception e) {
             log.error(e, "DataEmitter [{}] failed to send batch", jobId);
-            getSender().tell(new DataEmitterMessages.BatchEmitted(jobId, 0), getSelf());
+            getSender().tell(new DataEmitterMessages.BatchEmitFailed(jobId, records.size()), getSelf());
         }
     }
 

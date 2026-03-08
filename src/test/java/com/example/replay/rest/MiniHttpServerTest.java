@@ -306,4 +306,89 @@ class MiniHttpServerTest {
         assertEquals(404, response.statusCode());
         assertTrue(response.body().contains("Job not found"));
     }
+
+    @Test
+    void getJobStatusReturns200WithProgress() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+        HttpClient client = HttpClient.newHttpClient();
+
+        String createBody = "{\"name\":\"status-job\",\"parameters\":{\"source\":\"kafka\"}}";
+        HttpRequest create = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createBody))
+                .build();
+        HttpResponse<String> createResponse = client.send(create, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, createResponse.statusCode());
+        String jobId = createResponse.body().replaceAll(".*\"job_id\":\"([^\"]+)\".*", "$1");
+
+        HttpRequest statusReq = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/" + jobId + "/status"))
+                .GET()
+                .build();
+        HttpResponse<String> statusResponse = client.send(statusReq, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, statusResponse.statusCode());
+        assertTrue(statusResponse.body().contains("\"job_id\":\"" + jobId + "\""));
+        assertTrue(statusResponse.body().contains("\"status\":"));
+        assertTrue(statusResponse.body().contains("progress") || statusResponse.body().contains("events_processed"));
+    }
+
+    @Test
+    void getJobMetricsReturns200WithMetrics() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+        HttpClient client = HttpClient.newHttpClient();
+
+        String createBody = "{\"name\":\"metrics-job\",\"parameters\":{\"source\":\"kafka\"}}";
+        HttpRequest create = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createBody))
+                .build();
+        HttpResponse<String> createResponse = client.send(create, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, createResponse.statusCode());
+        String jobId = createResponse.body().replaceAll(".*\"job_id\":\"([^\"]+)\".*", "$1");
+
+        HttpRequest metricsReq = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/" + jobId + "/metrics"))
+                .GET()
+                .build();
+        HttpResponse<String> metricsResponse = client.send(metricsReq, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, metricsResponse.statusCode());
+        assertTrue(metricsResponse.body().contains("\"job_id\":\"" + jobId + "\""));
+        assertTrue(metricsResponse.body().contains("\"metrics\":"));
+        assertTrue(metricsResponse.body().contains("events_per_second"));
+        assertTrue(metricsResponse.body().contains("error_count"));
+    }
+
+    @Test
+    void getJobStatusReturns404WhenJobNotExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/nonexistent-id/status"))
+                .GET()
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode());
+    }
+
+    @Test
+    void getJobMetricsReturns404WhenJobNotExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/nonexistent-id/metrics"))
+                .GET()
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode());
+    }
 }

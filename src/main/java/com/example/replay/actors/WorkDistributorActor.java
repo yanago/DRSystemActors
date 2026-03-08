@@ -49,6 +49,8 @@ public final class WorkDistributorActor extends AbstractActor {
                 .match(WorkDistributorMessages.StartDistribution.class, this::onStartDistribution)
                 .match(WorkDistributorMessages.PacketComplete.class, this::onPacketComplete)
                 .match(WorkDistributorMessages.WorkerBatchRead.class, this::onWorkerBatchRead)
+                .match(DataEmitterMessages.BatchEmitted.class, this::onBatchEmitted)
+                .match(DataEmitterMessages.BatchEmitFailed.class, this::onBatchEmitFailed)
                 .match(WorkDistributorMessages.PauseDistribution.class, this::onPause)
                 .match(WorkDistributorMessages.ResumeDistribution.class, this::onResume)
                 .match(WorkDistributorMessages.CancelDistribution.class, this::onCancel)
@@ -107,7 +109,15 @@ public final class WorkDistributorActor extends AbstractActor {
 
     private void onWorkerBatchRead(WorkDistributorMessages.WorkerBatchRead msg) {
         if (cancelled) return;
-        emitterRef.tell(new DataEmitterMessages.EmitBatch(msg.jobId(), msg.records()), getSender());
+        emitterRef.tell(new DataEmitterMessages.EmitBatch(msg.jobId(), msg.records()), getSelf());
+    }
+
+    private void onBatchEmitted(DataEmitterMessages.BatchEmitted msg) {
+        getContext().getParent().tell(msg, getSelf());
+    }
+
+    private void onBatchEmitFailed(DataEmitterMessages.BatchEmitFailed msg) {
+        getContext().getParent().tell(msg, getSelf());
     }
 
     private void onPause(WorkDistributorMessages.PauseDistribution msg) {
