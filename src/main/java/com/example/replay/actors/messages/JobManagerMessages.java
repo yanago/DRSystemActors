@@ -42,4 +42,12 @@ public final class JobManagerMessages {
     /** Response with list of jobs. */
     public record JobListResponse(List<ReplayJob> jobs) {
     }
+
+    /** Reply to JobLifecycleCommand: command was accepted and forwarded to the job actor. */
+    public record CommandAccepted(String jobId) {
+    }
+
+    /** Reply to JobLifecycleCommand: no actor found for this job. */
+    public record JobNotFound(String jobId) {
+    }
 }
