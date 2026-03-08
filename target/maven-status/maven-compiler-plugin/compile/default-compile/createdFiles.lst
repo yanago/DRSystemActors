@@ -4,11 +4,17 @@ com/example/replay/model/SecurityEvent.class
 com/example/replay/datalake/package-info.class
 com/example/replay/api/package-info.class
 com/example/replay/storage/package-info.class
+com/example/replay/rest/ReplayJobHandler.class
 com/example/replay/actors/package-info.class
+com/example/replay/api/CreateReplayJobResponse.class
+com/example/replay/api/CreateReplayJobRequest.class
+com/example/replay/api/CreateReplayJobValidator.class
 com/example/replay/model/ReplayJob$ReplayJobStatus.class
 com/example/replay/util/package-info.class
 com/example/replay/rest/package-info.class
 com/example/replay/model/package-info.class
+com/example/replay/api/ValidationResult.class
 com/example/replay/rest/MiniHttpServer.class
 com/example/replay/util/JsonUtil.class
+com/example/replay/rest/ReplayJobHandler$HttpResponse.class
 com/example/replay/model/ReplayJob.class

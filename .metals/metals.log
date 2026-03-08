@@ -12588,3 +12588,47 @@
 2026.03.08 16:13:26 WARN  Invalid text document uri received from build server: file:///Users/vaskoyordanov/Library/Caches/ScalaCli/bloop/warning:%5Boptions%5D%20location%20of%20system%20modules%20is%20not%20set%20in%20conjunction%20with%20-source%2017%0A%20%20not%20setting%20the%20location%20of%20system%20modules%20may%20lead%20to%20class%20files%20that%20cannot%20run%20on%20JDK%2017%0A%20%20%20%20--release%2017%20is%20recommended%20instead%20of%20-source%2017%20-target%2017%20because%20it%20sets%20the%20location%20of%20system%20modules%20automatically%0A/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/util/JsonUtilTest.java
 2026.03.08 16:13:26 WARN  javac exited with exit code 1
 2026.03.08 16:13:26 INFO  time: compiled replay-test in 0.89s
+2026.03.08 16:17:46 INFO  compiling replay (2 java sources)
+2026.03.08 16:17:46 WARN  Unexpected javac output: warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+1 warning.
+2026.03.08 16:17:46 WARN  javac: [options] location of system modules is not set in conjunction with -source 17
+2026.03.08 16:17:46 INFO  time: compiled replay in 0.87s
+2026.03.08 16:17:49 INFO  compiling replay (1 java source)
+2026.03.08 16:17:49 WARN  Unexpected javac output: warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+1 warning.
+2026.03.08 16:17:49 WARN  javac: [options] location of system modules is not set in conjunction with -source 17
+2026.03.08 16:17:49 INFO  time: compiled replay in 0.76s
+2026.03.08 16:17:51 INFO  compiling replay (1 java source)
+2026.03.08 16:17:51 WARN  Unexpected javac output: warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+1 warning.
+2026.03.08 16:17:51 WARN  javac: [options] location of system modules is not set in conjunction with -source 17
+2026.03.08 16:17:51 INFO  time: compiled replay in 0.71s
+2026.03.08 16:18:00 INFO  compiling replay (1 java source)
+2026.03.08 16:18:00 WARN  Unexpected javac output: warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+1 warning.
+2026.03.08 16:18:00 WARN  javac: [options] location of system modules is not set in conjunction with -source 17
+2026.03.08 16:18:00 INFO  time: compiled replay in 0.81s
+2026.03.08 16:18:07 INFO  compiling replay (1 java source)
+2026.03.08 16:18:08 WARN  Unexpected javac output: warning: [options] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+1 warning.
+2026.03.08 16:18:08 WARN  javac: [options] location of system modules is not set in conjunction with -source 17
+2026.03.08 16:18:08 INFO  time: compiled replay in 1.08s
+2026.03.08 16:18:28 INFO  compiling replay (1 java source)
+2026.03.08 16:18:28 WARN  Invalid text document uri received from build server: file:///Users/vaskoyordanov/Library/Caches/ScalaCli/bloop/warning:%5Boptions%5D%20location%20of%20system%20modules%20is%20not%20set%20in%20conjunction%20with%20-source%2017%0A%20%20not%20setting%20the%20location%20of%20system%20modules%20may%20lead%20to%20class%20files%20that%20cannot%20run%20on%20JDK%2017%0A%20%20%20%20--release%2017%20is%20recommended%20instead%20of%20-source%2017%20-target%2017%20because%20it%20sets%20the%20location%20of%20system%20modules%20automatically%0A/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
+2026.03.08 16:18:28 WARN  javac exited with exit code 1
+2026.03.08 16:18:28 INFO  time: compiled replay in 0.89s
+2026.03.08 16:18:41 INFO  compiling replay (1 java source)
+2026.03.08 16:18:42 WARN  Invalid text document uri received from build server: file:///Users/vaskoyordanov/Library/Caches/ScalaCli/bloop/warning:%5Boptions%5D%20location%20of%20system%20modules%20is%20not%20set%20in%20conjunction%20with%20-source%2017%0A%20%20not%20setting%20the%20location%20of%20system%20modules%20may%20lead%20to%20class%20files%20that%20cannot%20run%20on%20JDK%2017%0A%20%20%20%20--release%2017%20is%20recommended%20instead%20of%20-source%2017%20-target%2017%20because%20it%20sets%20the%20location%20of%20system%20modules%20automatically%0A/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
+2026.03.08 16:18:42 WARN  javac exited with exit code 1
+2026.03.08 16:18:42 WARN  Invalid text document uri received from build server: file:///Users/vaskoyordanov/Library/Caches/ScalaCli/bloop/warning:%5Boptions%5D%20location%20of%20system%20modules%20is%20not%20set%20in%20conjunction%20with%20-source%2017%0A%20%20not%20setting%20the%20location%20of%20system%20modules%20may%20lead%20to%20class%20files%20that%20cannot%20run%20on%20JDK%2017%0A%20%20%20%20--release%2017%20is%20recommended%20instead%20of%20-source%2017%20-target%2017%20because%20it%20sets%20the%20location%20of%20system%20modules%20automatically%0A/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
+2026.03.08 16:18:42 INFO  time: compiled replay in 1.07s
