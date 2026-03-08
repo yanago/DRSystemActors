@@ -1,0 +1,6 @@
+com/example/replay/util/JsonUtilTest.class
+com/example/replay/rest/MiniHttpServerTest.class
+com/example/replay/model/SecurityEventTest.class
+com/example/replay/model/ReplayJobTest.class
+com/example/replay/storage/PostgresReplayJobRepositoryTest.class
+com/example/replay/api/CreateReplayJobValidatorTest.class
