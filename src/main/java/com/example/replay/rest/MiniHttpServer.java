@@ -1,9 +1,13 @@
 package com.example.replay.rest;
 
+import com.example.replay.storage.DataSourceConfig;
 import com.example.replay.storage.InMemoryReplayJobRepository;
+import com.example.replay.storage.PostgresReplayJobRepository;
 import com.example.replay.storage.ReplayJobRepository;
 
+import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Optional;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -43,6 +47,17 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
 
     public MiniHttpServer(int port) {
         this(port, new InMemoryReplayJobRepository());
+    }
+
+    /**
+     * Creates a server with repository from env: use Postgres when REPLAY_JDBC_URL is set, else in-memory.
+     */
+    public static MiniHttpServer createWithConfiguredStorage(int port) {
+        Optional<DataSource> ds = DataSourceConfig.createAndMigrate();
+        ReplayJobRepository repo = ds.isPresent()
+                ? new PostgresReplayJobRepository(ds.get())
+                : new InMemoryReplayJobRepository();
+        return new MiniHttpServer(port, repo);
     }
 
     public MiniHttpServer(int port, ReplayJobRepository jobRepository) {
@@ -225,9 +240,11 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 8080;
-        MiniHttpServer server = new MiniHttpServer(port);
+        MiniHttpServer server = createWithConfiguredStorage(port);
         server.start();
         System.out.println("Health check server listening on http://localhost:" + port + "/health");
+        boolean usePostgres = System.getenv("REPLAY_JDBC_URL") != null && !System.getenv("REPLAY_JDBC_URL").isBlank();
+        System.out.println("Job storage: " + (usePostgres ? "PostgreSQL" : "in-memory"));
         Runtime.getRuntime().addShutdownHook(new Thread(server::close));
         Thread.currentThread().join();
     }

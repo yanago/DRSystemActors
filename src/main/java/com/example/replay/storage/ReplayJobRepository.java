@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Persistence for replay jobs. In-memory implementation now; replace with PostgreSQL later.
+ * Persistence for replay jobs. Implementations: in-memory ({@link InMemoryReplayJobRepository}) or PostgreSQL ({@link PostgresReplayJobRepository}).
  */
 public interface ReplayJobRepository {
 
