@@ -34,6 +34,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/CustomerPartitionKey.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/KafkaEventDestination.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/JobMetrics.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/JobProgress.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/ReplayJob.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/SecurityEvent.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/package-info.java

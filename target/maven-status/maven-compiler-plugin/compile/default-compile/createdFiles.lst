@@ -1,4 +1,5 @@
 com/example/replay/storage/ReplayJobRepository.class
+com/example/replay/model/JobMetrics.class
 com/example/replay/api/package-info.class
 com/example/replay/api/EventDestinationFactory.class
 com/example/replay/datalake/WorkPacket.class
@@ -84,8 +85,10 @@ com/example/replay/datalake/SecurityEventParquetGenerator$RecordSpec.class
 com/example/replay/kafka/CustomerPartitionKey.class
 com/example/replay/model/package-info.class
 com/example/replay/api/ValidationResult.class
+com/example/replay/model/JobProgress.class
 com/example/replay/actors/messages/ReplayJobActorMessages.class
 com/example/replay/actors/messages/DataReaderMessages$ReadNextBatch.class
 com/example/replay/datalake/SimulatedEventCatalog.class
+com/example/replay/actors/messages/DataEmitterMessages$BatchEmitFailed.class
 com/example/replay/datalake/ReplayEventSourceFactory.class
 com/example/replay/storage/InMemoryReplayJobRepository.class
