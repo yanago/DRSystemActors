@@ -1,6 +1,8 @@
 package com.example.replay.rest;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -9,13 +11,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Minimal HTTP server using raw sockets. Serves GET /health with 200 OK for health checks.
+ * Minimal HTTP server using raw sockets. Serves GET /health and POST /api/v1/replay/jobs.
  */
 public final class MiniHttpServer implements Runnable, AutoCloseable {
 
     private static final String HEALTH_PATH = "/health";
+    private static final String REPLAY_JOBS_PATH = "/api/v1/replay/jobs";
     private static final String RESPONSE_OK = "OK";
     private static final String CRLF = "\r\n";
+    private static final String CONTENT_LENGTH = "Content-Length";
+    private static final String APPLICATION_JSON = "application/json; charset=UTF-8";
 
     private final int port;
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -67,51 +72,99 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
 
     private void handle(Socket client) {
         try (Socket s = client;
-             BufferedReader in = new BufferedReader(
-                     new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+             InputStream rawIn = s.getInputStream();
              OutputStream out = s.getOutputStream()) {
 
-            String requestLine = in.readLine();
-            if (requestLine == null) {
-                sendResponse(out, 400, "Bad Request");
+            String requestLine = readLine(rawIn);
+            if (requestLine == null || requestLine.isEmpty()) {
+                sendResponse(out, 400, "Bad Request", false);
                 return;
             }
             String[] parts = requestLine.split("\\s+");
             if (parts.length < 2) {
-                sendResponse(out, 400, "Bad Request");
+                sendResponse(out, 400, "Bad Request", false);
                 return;
             }
             String method = parts[0];
-            String path = parts[1];
+            String path = pathWithoutQuery(parts[1]);
 
-            // consume remaining headers
+            int contentLength = 0;
             String line;
-            while ((line = in.readLine()) != null && !line.isEmpty()) {
-                // skip
+            while ((line = readLine(rawIn)) != null && !line.isEmpty()) {
+                if (line.toLowerCase().startsWith(CONTENT_LENGTH.toLowerCase() + ":")) {
+                    String value = line.substring(line.indexOf(':') + 1).trim();
+                    try {
+                        contentLength = Integer.parseInt(value);
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+
+            String body = null;
+            if (contentLength > 0) {
+                byte[] buf = new byte[contentLength];
+                int read = 0;
+                while (read < contentLength) {
+                    int n = rawIn.read(buf, read, contentLength - read);
+                    if (n <= 0) break;
+                    read += n;
+                }
+                body = new String(buf, 0, read, StandardCharsets.UTF_8);
             }
 
             if ("GET".equalsIgnoreCase(method) && HEALTH_PATH.equals(path)) {
-                sendResponse(out, 200, RESPONSE_OK);
-            } else {
-                sendResponse(out, 404, "Not Found");
+                sendResponse(out, 200, RESPONSE_OK, false);
+                return;
             }
+            if ("POST".equalsIgnoreCase(method) && REPLAY_JOBS_PATH.equals(path)) {
+                ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleCreateJob(body);
+                sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                return;
+            }
+            sendResponse(out, 404, "Not Found", false);
         } catch (IOException e) {
             // connection error, ignore
         }
     }
 
-    private void sendResponse(OutputStream out, int statusCode, String body) throws IOException {
-        String status = statusCode == 200 ? "200 OK" : statusCode == 404 ? "404 Not Found" : "400 Bad Request";
+    private static String pathWithoutQuery(String path) {
+        int q = path.indexOf('?');
+        return q < 0 ? path : path.substring(0, q);
+    }
+
+    private static String readLine(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = in.read()) != -1) {
+            if (c == '\n') break;
+            if (c != '\r') sb.append((char) c);
+        }
+        return sb.toString();
+    }
+
+    private void sendResponse(OutputStream out, int statusCode, String body, boolean json) throws IOException {
+        String status = statusLine(statusCode);
         byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
+        String contentType = json ? APPLICATION_JSON : "text/plain; charset=UTF-8";
         String headers =
                 "HTTP/1.1 " + status + CRLF +
-                        "Content-Type: text/plain; charset=UTF-8" + CRLF +
+                        "Content-Type: " + contentType + CRLF +
                         "Content-Length: " + bodyBytes.length + CRLF +
                         "Connection: close" + CRLF +
                         CRLF;
         out.write(headers.getBytes(StandardCharsets.UTF_8));
         out.write(bodyBytes);
         out.flush();
+    }
+
+    private static String statusLine(int code) {
+        return switch (code) {
+            case 200 -> "200 OK";
+            case 201 -> "201 Created";
+            case 400 -> "400 Bad Request";
+            case 404 -> "404 Not Found";
+            default -> code + " ";
+        };
     }
 
     @Override
