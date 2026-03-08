@@ -1,4 +1,5 @@
 com/example/replay/actors/JobManagerTest$3.class
+com/example/replay/datalake/SimulatedEventCatalogTest.class
 com/example/replay/util/JsonUtilTest.class
 com/example/replay/actors/JobManagerTest$4.class
 com/example/replay/actors/JobManagerTest.class

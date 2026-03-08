@@ -13,6 +13,11 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/CreateReplayJobValidator.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/ValidationResult.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/EventBatch.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ParquetEventReader.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ReplayEventSource.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ReplayEventSourceFactory.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/SimulatedEventCatalog.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/ReplayJob.java

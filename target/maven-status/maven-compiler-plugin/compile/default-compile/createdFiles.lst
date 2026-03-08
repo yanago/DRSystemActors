@@ -7,6 +7,7 @@ com/example/replay/storage/PostgresReplayJobRepository.class
 com/example/replay/storage/PostgresReplayJobRepository$1.class
 com/example/replay/actors/messages/JobManagerMessages$ListJobs.class
 com/example/replay/actors/messages/DataEmitterMessages.class
+com/example/replay/datalake/ReplayEventSource.class
 com/example/replay/actors/ReplayJobActor.class
 com/example/replay/actors/messages/JobManagerMessages$JobStatusResponse.class
 com/example/replay/rest/ReplayJobHandler$HttpResponse.class
@@ -18,6 +19,7 @@ com/example/replay/kafka/package-info.class
 com/example/replay/package-info.class
 com/example/replay/actors/messages/ReplayJobActorMessages$Run.class
 com/example/replay/storage/package-info.class
+com/example/replay/datalake/ParquetEventReader.class
 com/example/replay/actors/messages/JobManagerMessages.class
 com/example/replay/actors/messages/JobManagerMessages$JobLifecycleCommand$LifecycleCommand.class
 com/example/replay/actors/DataReaderActor.class
@@ -48,6 +50,7 @@ com/example/replay/actors/messages/DataEmitterMessages$BatchEmitted.class
 com/example/replay/actors/messages/DataReaderMessages$StartReading.class
 com/example/replay/actors/DataEmitterActor.class
 com/example/replay/model/SecurityEvent.class
+com/example/replay/datalake/EventBatch.class
 com/example/replay/rest/ReplayJobHandler.class
 com/example/replay/actors/messages/ReplayJobActorMessages$Start.class
 com/example/replay/api/CreateReplayJobResponse.class
@@ -56,4 +59,7 @@ com/example/replay/util/package-info.class
 com/example/replay/model/package-info.class
 com/example/replay/api/ValidationResult.class
 com/example/replay/actors/messages/ReplayJobActorMessages.class
+com/example/replay/actors/messages/DataReaderMessages$ReadNextBatch.class
+com/example/replay/datalake/SimulatedEventCatalog.class
+com/example/replay/datalake/ReplayEventSourceFactory.class
 com/example/replay/storage/InMemoryReplayJobRepository.class
