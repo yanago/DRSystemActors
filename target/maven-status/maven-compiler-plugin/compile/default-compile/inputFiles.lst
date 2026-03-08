@@ -2,9 +2,12 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/ReplayJob.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/SecurityEvent.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/model/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/MiniHttpServer.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/rest/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/storage/package-info.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/util/JsonUtil.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/util/package-info.java
