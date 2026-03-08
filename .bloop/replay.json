@@ -260,22 +260,6 @@
                     ]
                 },
                 {
-                    "organization": "org.apache.pekko",
-                    "name": "pekko-actor-typed_3",
-                    "version": "1.1.2",
-                    "artifacts": [
-                        {
-                            "name": "pekko-actor-typed_3",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-typed_3/1.1.2/pekko-actor-typed_3-1.1.2.jar"
-                        },
-                        {
-                            "name": "pekko-actor-typed_3",
-                            "classifier": "sources",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-typed_3/1.1.2/pekko-actor-typed_3-1.1.2-sources.jar"
-                        }
-                    ]
-                },
-                {
                     "organization": "org.postgresql",
                     "name": "postgresql",
                     "version": "42.7.3",
@@ -560,22 +544,6 @@
                             "name": "jackson-datatype-jdk8",
                             "classifier": "sources",
                             "path": "/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.13.5/jackson-datatype-jdk8-2.13.5-sources.jar"
-                        }
-                    ]
-                },
-                {
-                    "organization": "org.apache.pekko",
-                    "name": "pekko-actor-testkit-typed_3",
-                    "version": "1.1.2",
-                    "artifacts": [
-                        {
-                            "name": "pekko-actor-testkit-typed_3",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-testkit-typed_3/1.1.2/pekko-actor-testkit-typed_3-1.1.2.jar"
-                        },
-                        {
-                            "name": "pekko-actor-testkit-typed_3",
-                            "classifier": "sources",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-testkit-typed_3/1.1.2/pekko-actor-testkit-typed_3-1.1.2-sources.jar"
                         }
                     ]
                 },

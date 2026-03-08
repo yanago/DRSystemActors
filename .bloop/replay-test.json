@@ -5,7 +5,7 @@
         "directory": "/Users/vaskoyordanov/DRSystemActors",
         "workspaceDir": "/Users/vaskoyordanov/DRSystemActors",
         "sources": [
-            
+            "/Users/vaskoyordanov/DRSystemActors/src/test/java"
         ],
         "dependencies": [
             "replay"
@@ -72,8 +72,6 @@
             "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-connectors-kafka_3/1.1.0/pekko-connectors-kafka_3-1.1.0.jar",
             "/Users/vaskoyordanov/.m2/repository/org/apache/kafka/kafka-clients/3.8.0/kafka-clients-3.8.0.jar",
             "/Users/vaskoyordanov/.m2/repository/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar",
-            "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-testkit-typed_3/1.1.2/pekko-actor-testkit-typed_3-1.1.2.jar",
-            "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-typed_3/1.1.2/pekko-actor-typed_3-1.1.2.jar",
             "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-testkit_3/1.1.2/pekko-testkit_3-1.1.2.jar",
             "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-stream-testkit_3/1.1.2/pekko-stream-testkit_3-1.1.2.jar",
             "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http-testkit_3/1.0.1/pekko-http-testkit_3-1.0.1.jar",
@@ -291,22 +289,6 @@
                             "name": "pekko-http-testkit_3",
                             "classifier": "sources",
                             "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-http-testkit_3/1.0.1/pekko-http-testkit_3-1.0.1-sources.jar"
-                        }
-                    ]
-                },
-                {
-                    "organization": "org.apache.pekko",
-                    "name": "pekko-actor-typed_3",
-                    "version": "1.1.2",
-                    "artifacts": [
-                        {
-                            "name": "pekko-actor-typed_3",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-typed_3/1.1.2/pekko-actor-typed_3-1.1.2.jar"
-                        },
-                        {
-                            "name": "pekko-actor-typed_3",
-                            "classifier": "sources",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-typed_3/1.1.2/pekko-actor-typed_3-1.1.2-sources.jar"
                         }
                     ]
                 },
@@ -595,22 +577,6 @@
                             "name": "jackson-datatype-jdk8",
                             "classifier": "sources",
                             "path": "/Users/vaskoyordanov/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.13.5/jackson-datatype-jdk8-2.13.5-sources.jar"
-                        }
-                    ]
-                },
-                {
-                    "organization": "org.apache.pekko",
-                    "name": "pekko-actor-testkit-typed_3",
-                    "version": "1.1.2",
-                    "artifacts": [
-                        {
-                            "name": "pekko-actor-testkit-typed_3",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-testkit-typed_3/1.1.2/pekko-actor-testkit-typed_3-1.1.2.jar"
-                        },
-                        {
-                            "name": "pekko-actor-testkit-typed_3",
-                            "classifier": "sources",
-                            "path": "/Users/vaskoyordanov/.m2/repository/org/apache/pekko/pekko-actor-testkit-typed_3/1.1.2/pekko-actor-testkit-typed_3-1.1.2-sources.jar"
                         }
                     ]
                 },
