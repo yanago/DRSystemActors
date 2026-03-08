@@ -1,5 +1,7 @@
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/actors/JobManagerTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/api/CreateReplayJobValidatorTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/datalake/SimulatedEventCatalogTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/datalake/WorkPacketFactoryTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/model/ReplayJobTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/model/SecurityEventTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/rest/MiniHttpServerTest.java

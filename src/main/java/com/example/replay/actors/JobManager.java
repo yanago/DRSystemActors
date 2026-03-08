@@ -92,8 +92,9 @@ public final class JobManager extends AbstractActor {
                         case RESUME -> ref.tell(new ReplayJobActorMessages.Resume(), getSelf());
                         case CANCEL -> ref.tell(new ReplayJobActorMessages.Cancel(), getSelf());
                     }
+                    getSender().tell(new JobManagerMessages.CommandAccepted(jobId), getSelf());
                 },
-                () -> log.warning("Job [{}] not found for command {}", jobId, cmd)
+                () -> getSender().tell(new JobManagerMessages.JobNotFound(jobId), getSelf())
         );
     }
 }

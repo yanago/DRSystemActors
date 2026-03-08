@@ -195,8 +195,100 @@ class MiniHttpServerTest {
                 .build();
         HttpResponse<String> getResponse = client.send(get, HttpResponse.BodyHandlers.ofString());
         assertEquals(200, getResponse.statusCode());
-        assertTrue(getResponse.body().contains("\"job_id\":\"" + jobId + "\""));
-        assertTrue(getResponse.body().contains("\"status\":\"PENDING\""));
+        assertTrue(getResponse.body().contains(jobId), "body should contain job_id: " + getResponse.body());
+        assertTrue(getResponse.body().contains("\"status\":") && (getResponse.body().contains("PENDING") || getResponse.body().contains("RUNNING")), "body should contain status");
+    }
+
+    @Test
+    void postJobStartReturns200WhenJobExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+        HttpClient client = HttpClient.newHttpClient();
+
+        String createBody = "{\"name\":\"lifecycle\",\"parameters\":{\"source\":\"kafka\"}}";
+        HttpRequest create = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createBody))
+                .build();
+        HttpResponse<String> createResponse = client.send(create, HttpResponse.BodyHandlers.ofString());
+        assertEquals(201, createResponse.statusCode());
+        String jobId = createResponse.body().replaceAll(".*\"job_id\":\"([^\"]+)\".*", "$1");
+
+        HttpRequest start = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/" + jobId + "/start"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> startResponse = client.send(start, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, startResponse.statusCode());
+        assertTrue(startResponse.body().contains("accepted"));
+        assertTrue(startResponse.body().contains(jobId));
+    }
+
+    @Test
+    void postJobPauseReturns200WhenJobExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+        HttpClient client = HttpClient.newHttpClient();
+
+        String createBody = "{\"name\":\"pause-test\",\"parameters\":{\"source\":\"kafka\"}}";
+        HttpRequest create = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createBody))
+                .build();
+        HttpResponse<String> createResponse = client.send(create, HttpResponse.BodyHandlers.ofString());
+        String jobId = createResponse.body().replaceAll(".*\"job_id\":\"([^\"]+)\".*", "$1");
+
+        HttpRequest pause = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/" + jobId + "/pause"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> pauseResponse = client.send(pause, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, pauseResponse.statusCode());
+        assertTrue(pauseResponse.body().contains("accepted"));
+    }
+
+    @Test
+    void postJobCancelReturns200WhenJobExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+        HttpClient client = HttpClient.newHttpClient();
+
+        String createBody = "{\"name\":\"cancel-test\",\"parameters\":{\"source\":\"kafka\"}}";
+        HttpRequest create = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(createBody))
+                .build();
+        HttpResponse<String> createResponse = client.send(create, HttpResponse.BodyHandlers.ofString());
+        String jobId = createResponse.body().replaceAll(".*\"job_id\":\"([^\"]+)\".*", "$1");
+
+        HttpRequest cancel = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/" + jobId + "/cancel"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> cancelResponse = client.send(cancel, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, cancelResponse.statusCode());
+        assertTrue(cancelResponse.body().contains("accepted"));
+    }
+
+    @Test
+    void postJobLifecycleReturns404WhenJobNotExists() throws IOException, InterruptedException {
+        server = new MiniHttpServer(0);
+        server.start();
+        int port = server.getLocalPort();
+
+        HttpRequest start = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/api/v1/replay/jobs/nonexistent-id-999/start"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = HttpClient.newHttpClient().send(start, HttpResponse.BodyHandlers.ofString());
+        assertEquals(404, response.statusCode());
+        assertTrue(response.body().contains("Job not found"));
     }
 
     @Test

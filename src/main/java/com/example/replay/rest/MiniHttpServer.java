@@ -1,20 +1,33 @@
 package com.example.replay.rest;
 
+import com.example.replay.api.CreateReplayJobRequest;
+import com.example.replay.api.CreateReplayJobResponse;
+import com.example.replay.actors.JobManager;
+import com.example.replay.actors.messages.JobManagerMessages;
 import com.example.replay.storage.DataSourceConfig;
 import com.example.replay.storage.InMemoryReplayJobRepository;
 import com.example.replay.storage.PostgresReplayJobRepository;
 import com.example.replay.storage.ReplayJobRepository;
+import com.example.replay.util.JsonUtil;
+import org.apache.pekko.actor.ActorRef;
+import org.apache.pekko.actor.ActorSystem;
+import org.apache.pekko.pattern.Patterns;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Optional;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,8 +43,12 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
     private static final String CONTENT_LENGTH = "Content-Length";
     private static final String APPLICATION_JSON = "application/json; charset=UTF-8";
 
+    private static final Duration ASK_TIMEOUT = Duration.ofSeconds(3);
+
     private final int port;
     private final ReplayJobRepository jobRepository;
+    private volatile ActorSystem actorSystem;
+    private volatile ActorRef jobManager;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private volatile ServerSocket serverSocket;
     private final ExecutorService acceptor = Executors.newSingleThreadExecutor(r -> {
@@ -69,6 +86,8 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
         if (!running.compareAndSet(false, true)) {
             return;
         }
+        actorSystem = ActorSystem.create("ReplayServer");
+        jobManager = actorSystem.actorOf(JobManager.props(jobRepository), "jobManager");
         serverSocket = new ServerSocket(port);
         acceptor.submit(this::acceptLoop);
     }
@@ -144,6 +163,9 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
             if (REPLAY_JOBS_PATH.equals(path)) {
                 if ("POST".equalsIgnoreCase(method)) {
                     ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleCreateJob(jobRepository, body);
+                    if (apiResponse.getStatusCode() == 201 && jobManager != null) {
+                        registerJobWithManager(body, apiResponse.getBody());
+                    }
                     sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
                     return;
                 }
@@ -153,18 +175,78 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
                     return;
                 }
             }
-            if ("GET".equalsIgnoreCase(method) && path.startsWith(REPLAY_JOBS_PATH_PREFIX)) {
-                String jobId = path.substring(REPLAY_JOBS_PATH_PREFIX.length()).trim();
-                if (!jobId.isEmpty() && !jobId.contains("/")) {
-                    ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleGetJob(jobRepository, jobId);
-                    sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
-                    return;
+            if (path.startsWith(REPLAY_JOBS_PATH_PREFIX)) {
+                String suffix = path.substring(REPLAY_JOBS_PATH_PREFIX.length()).trim();
+                if (!suffix.isEmpty() && !suffix.contains("/")) {
+                    if ("GET".equalsIgnoreCase(method)) {
+                        ReplayJobHandler.HttpResponse apiResponse = ReplayJobHandler.handleGetJob(jobRepository, suffix);
+                        sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                        return;
+                    }
+                }
+                if ("POST".equalsIgnoreCase(method)) {
+                    int slash = suffix.indexOf('/');
+                    if (slash > 0) {
+                        String jobId = suffix.substring(0, slash).trim();
+                        String command = suffix.substring(slash + 1).trim();
+                        JobManagerMessages.JobLifecycleCommand.LifecycleCommand cmd = parseLifecycleCommand(command);
+                        if (cmd != null && !jobId.isEmpty()) {
+                            ReplayJobHandler.HttpResponse apiResponse = handleLifecycleCommand(jobId, cmd);
+                            sendResponse(out, apiResponse.getStatusCode(), apiResponse.getBody(), true);
+                            return;
+                        }
+                    }
                 }
             }
             sendResponse(out, 404, "Not Found", false);
         } catch (IOException e) {
             // connection error, ignore
         }
+    }
+
+    private void registerJobWithManager(String requestBody, String createResponseBody) {
+        try {
+            CreateReplayJobResponse created = JsonUtil.fromJson(createResponseBody, CreateReplayJobResponse.class);
+            CreateReplayJobRequest req = JsonUtil.fromJson(requestBody, CreateReplayJobRequest.class);
+            if (created != null && req != null) {
+                Map<String, Object> params = new HashMap<>(req.getParameters() != null ? req.getParameters() : Map.of());
+                if (req.getName() != null) {
+                    params.put("name", req.getName());
+                }
+                jobManager.tell(new JobManagerMessages.CreateJob(created.getJobId(), params), ActorRef.noSender());
+            }
+        } catch (Exception ignored) {
+            // best-effort: job is in repo, actor may not exist for lifecycle commands
+        }
+    }
+
+    private static JobManagerMessages.JobLifecycleCommand.LifecycleCommand parseLifecycleCommand(String command) {
+        return switch (command.toLowerCase()) {
+            case "start" -> JobManagerMessages.JobLifecycleCommand.LifecycleCommand.START;
+            case "pause" -> JobManagerMessages.JobLifecycleCommand.LifecycleCommand.PAUSE;
+            case "resume" -> JobManagerMessages.JobLifecycleCommand.LifecycleCommand.RESUME;
+            case "cancel" -> JobManagerMessages.JobLifecycleCommand.LifecycleCommand.CANCEL;
+            default -> null;
+        };
+    }
+
+    private ReplayJobHandler.HttpResponse handleLifecycleCommand(String jobId, JobManagerMessages.JobLifecycleCommand.LifecycleCommand command) {
+        if (jobManager == null) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job manager not available\",\"job_id\":\"" + jobId + "\"}");
+        }
+        try {
+            CompletionStage<Object> stage = Patterns.ask(jobManager, new JobManagerMessages.JobLifecycleCommand(jobId, command), ASK_TIMEOUT);
+            Object result = stage.toCompletableFuture().get(ASK_TIMEOUT.toMillis() + 500, TimeUnit.MILLISECONDS);
+            if (result instanceof JobManagerMessages.CommandAccepted accepted) {
+                return ReplayJobHandler.HttpResponse.ok("{\"job_id\":\"" + accepted.jobId() + "\",\"command\":\"" + command.name().toLowerCase() + "\",\"status\":\"accepted\"}");
+            }
+            if (result instanceof JobManagerMessages.JobNotFound notFound) {
+                return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + notFound.jobId() + "\"}");
+            }
+        } catch (Exception e) {
+            return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Request failed\",\"job_id\":\"" + jobId + "\"}");
+        }
+        return ReplayJobHandler.HttpResponse.notFound("{\"error\":\"Job not found\",\"job_id\":\"" + jobId + "\"}");
     }
 
     private static String pathWithoutQuery(String path) {
@@ -217,6 +299,11 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
             }
             serverSocket = null;
         }
+        if (actorSystem != null) {
+            actorSystem.terminate();
+            actorSystem = null;
+        }
+        jobManager = null;
         acceptor.shutdown();
         workers.shutdown();
     }

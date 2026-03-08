@@ -139,6 +139,28 @@
             <artifactId>iceberg-core</artifactId>
             <version>${iceberg.version}</version>
         </dependency>
+        <!-- Parquet file reading/writing (for partitioned data) -->
+        <dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-hadoop</artifactId>
+            <version>1.14.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>3.3.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- Pekko Connectors Kafka -->
         <dependency>
@@ -225,4 +247,35 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>generate-events</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>generate-parquet-events</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>com.example.replay.datalake.SecurityEventParquetGenerator</mainClass>
+                            <arguments>
+                                <argument>target/parquet-events</argument>
+                                <argument>52000</argument>
+                                <argument>7</argument>
+                            </arguments>
+                            <!-- Java 23+: allow Hadoop UGI getSubject for local Parquet write -->
+                            <jvmArguments>-Djava.security.manager=allow</jvmArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
