@@ -86,6 +86,7 @@ public final class ReplayJobActor extends AbstractActor {
         this.parameters = msg.parameters() != null ? msg.parameters() : Map.of();
         status = ReplayJob.ReplayJobStatus.RUNNING;
         saveJob();
+        emitterRef.tell(new DataEmitterMessages.ConfigureDestination(parameters), getSelf());
         if (usePartitionAwareDistribution(parameters)) {
             distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
         } else {
@@ -96,6 +97,7 @@ public final class ReplayJobActor extends AbstractActor {
 
     private void onStart(ReplayJobActorMessages.Start msg) {
         if (status == ReplayJob.ReplayJobStatus.PENDING) {
+            emitterRef.tell(new DataEmitterMessages.ConfigureDestination(parameters), getSelf());
             if (usePartitionAwareDistribution(parameters)) {
                 distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
             } else {

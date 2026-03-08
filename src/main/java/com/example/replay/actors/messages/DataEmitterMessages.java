@@ -1,6 +1,7 @@
 package com.example.replay.actors.messages;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Messages for {@link com.example.replay.actors.DataEmitterActor}.
@@ -8,6 +9,10 @@ import java.util.List;
 public final class DataEmitterMessages {
 
     private DataEmitterMessages() {
+    }
+
+    /** Configure destination (Kafka or REST) from job parameters. Sent before first EmitBatch. */
+    public record ConfigureDestination(Map<String, Object> config) {
     }
 
     /** Emit a batch of records. */
