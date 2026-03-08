@@ -91,6 +91,7 @@ public final class ReplayJob {
     public enum ReplayJobStatus {
         PENDING,
         RUNNING,
+        PAUSED,
         COMPLETED,
         FAILED,
         CANCELLED
