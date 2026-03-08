@@ -1,9 +1,17 @@
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/actors/FailoverNoDataLossTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/actors/JobManagerTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/actors/LargeScaleReplayJobTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/api/CreateReplayJobValidatorTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/api/EmissionToSimulatedRestTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/api/EventDestinationFactoryTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/datalake/SimulatedEventCatalogTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/datalake/SimulatedPartitionMetadataTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/datalake/WorkPacketFactoryTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/kafka/CustomerPartitionKeyTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/kafka/KafkaEventDestinationTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/model/ReplayJobTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/model/SecurityEventTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/rest/MiniHttpServerTest.java
+/Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/rest/SimulatedRestDestinationTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/storage/PostgresReplayJobRepositoryTest.java
 /Users/vaskoyordanov/DRSystemActors/src/test/java/com/example/replay/util/JsonUtilTest.java

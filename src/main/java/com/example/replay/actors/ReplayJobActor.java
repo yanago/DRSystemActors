@@ -5,6 +5,8 @@ import com.example.replay.actors.messages.DataReaderMessages;
 import com.example.replay.actors.messages.JobManagerMessages;
 import com.example.replay.actors.messages.ReplayJobActorMessages;
 import com.example.replay.actors.messages.WorkDistributorMessages;
+import com.example.replay.model.JobMetrics;
+import com.example.replay.model.JobProgress;
 import com.example.replay.model.ReplayJob;
 import com.example.replay.storage.ReplayJobRepository;
 import org.apache.pekko.actor.ActorRef;
@@ -30,6 +32,13 @@ public final class ReplayJobActor extends AbstractActor {
     private ActorRef readerRef;
     private ActorRef distributorRef;
     private ActorRef emitterRef;
+
+    private long eventsProcessed;
+    private Instant startedAt;
+    private Instant lastActivityAt;
+    private long errorCount;
+    private long latencySumMs;
+    private long latencyCount;
 
     private ReplayJobActor(String jobId, ReplayJobRepository repository) {
         this.jobId = jobId;
@@ -73,7 +82,8 @@ public final class ReplayJobActor extends AbstractActor {
                 .match(ReplayJobActorMessages.GetStatus.class, this::onGetStatus)
                 .match(DataReaderMessages.BatchRead.class, this::onBatchRead)
                 .match(WorkDistributorMessages.AllWorkComplete.class, this::onAllWorkComplete)
-                .match(DataEmitterMessages.BatchEmitted.class, msg -> { /* ack from emitter; optional back-pressure */ })
+                .match(DataEmitterMessages.BatchEmitted.class, this::onBatchEmitted)
+                .match(DataEmitterMessages.BatchEmitFailed.class, this::onBatchEmitFailed)
                 .matchAny(msg -> log.warning("Unhandled message: {}", msg))
                 .build();
     }
@@ -85,7 +95,10 @@ public final class ReplayJobActor extends AbstractActor {
         }
         this.parameters = msg.parameters() != null ? msg.parameters() : Map.of();
         status = ReplayJob.ReplayJobStatus.RUNNING;
+        this.startedAt = Instant.now();
+        this.lastActivityAt = this.startedAt;
         saveJob();
+        emitterRef.tell(new DataEmitterMessages.ConfigureDestination(parameters), getSelf());
         if (usePartitionAwareDistribution(parameters)) {
             distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
         } else {
@@ -96,6 +109,9 @@ public final class ReplayJobActor extends AbstractActor {
 
     private void onStart(ReplayJobActorMessages.Start msg) {
         if (status == ReplayJob.ReplayJobStatus.PENDING) {
+            this.startedAt = Instant.now();
+            this.lastActivityAt = this.startedAt;
+            emitterRef.tell(new DataEmitterMessages.ConfigureDestination(parameters), getSelf());
             if (usePartitionAwareDistribution(parameters)) {
                 distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
             } else {
@@ -158,10 +174,44 @@ public final class ReplayJobActor extends AbstractActor {
     }
 
     private void onGetStatus(ReplayJobActorMessages.GetStatus msg) {
-        getSender().tell(new JobManagerMessages.JobStatusResponse(jobId, status, null), getSelf());
+        JobProgress progress = buildProgress();
+        JobMetrics metrics = buildMetrics();
+        getSender().tell(new JobManagerMessages.JobStatusResponse(jobId, status, null, progress, metrics), getSelf());
+    }
+
+    private void onBatchEmitted(DataEmitterMessages.BatchEmitted msg) {
+        eventsProcessed += msg.count();
+        lastActivityAt = Instant.now();
+        if (msg.latencyMs() > 0) {
+            latencySumMs += msg.latencyMs();
+            latencyCount++;
+        }
+    }
+
+    private void onBatchEmitFailed(DataEmitterMessages.BatchEmitFailed msg) {
+        errorCount += msg.failedCount();
+        lastActivityAt = Instant.now();
+    }
+
+    private JobProgress buildProgress() {
+        if (startedAt == null) return new JobProgress(0, null, null);
+        return new JobProgress(eventsProcessed, startedAt, lastActivityAt != null ? lastActivityAt : startedAt);
+    }
+
+    private JobMetrics buildMetrics() {
+        double eventsPerSecond = 0;
+        if (startedAt != null && eventsProcessed > 0) {
+            long elapsedSec = Math.max(1, java.time.Duration.between(startedAt, Instant.now()).getSeconds());
+            eventsPerSecond = (double) eventsProcessed / elapsedSec;
+        }
+        double latencyMsAvg = (latencyCount > 0) ? (double) latencySumMs / latencyCount : 0;
+        return new JobMetrics(eventsPerSecond, latencyMsAvg, errorCount);
     }
 
     private void onBatchRead(DataReaderMessages.BatchRead msg) {
+        if (status == ReplayJob.ReplayJobStatus.RUNNING && msg.records() != null && !msg.records().isEmpty()) {
+            emitterRef.tell(new DataEmitterMessages.EmitBatch(jobId, msg.records()), getSelf());
+        }
         if (msg.lastBatch()) {
             if (status != ReplayJob.ReplayJobStatus.CANCELLED && status != ReplayJob.ReplayJobStatus.FAILED) {
                 status = ReplayJob.ReplayJobStatus.COMPLETED;
@@ -169,10 +219,6 @@ public final class ReplayJobActor extends AbstractActor {
             }
             saveJob();
             emitterRef.tell(new DataEmitterMessages.StopEmitting(), getSelf());
-            return;
-        }
-        if (status == ReplayJob.ReplayJobStatus.RUNNING && msg.records() != null && !msg.records().isEmpty()) {
-            emitterRef.tell(new DataEmitterMessages.EmitBatch(jobId, msg.records()), getSelf());
         }
     }
 

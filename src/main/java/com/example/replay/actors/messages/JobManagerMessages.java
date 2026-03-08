@@ -1,5 +1,7 @@
 package com.example.replay.actors.messages;
 
+import com.example.replay.model.JobMetrics;
+import com.example.replay.model.JobProgress;
 import com.example.replay.model.ReplayJob;
 
 import java.util.List;
@@ -17,7 +19,7 @@ public final class JobManagerMessages {
     public record CreateJob(String jobId, Map<String, Object> parameters) {
     }
 
-    /** Request job status by id. Reply with JobStatusResponse. */
+    /** Request job status by id. Reply with JobStatusResponse (includes progress and metrics when from actor). */
     public record GetJobStatus(String jobId) {
     }
 
@@ -35,8 +37,17 @@ public final class JobManagerMessages {
         }
     }
 
-    /** Response with current job status. */
-    public record JobStatusResponse(String jobId, ReplayJob.ReplayJobStatus status, String message) {
+    /** Response with current job status, optional progress and metrics. */
+    public record JobStatusResponse(
+            String jobId,
+            ReplayJob.ReplayJobStatus status,
+            String message,
+            JobProgress progress,
+            JobMetrics metrics) {
+
+        public JobStatusResponse(String jobId, ReplayJob.ReplayJobStatus status, String message) {
+            this(jobId, status, message, null, null);
+        }
     }
 
     /** Response with list of jobs. */
