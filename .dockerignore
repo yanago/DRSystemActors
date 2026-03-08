@@ -1,0 +1,9 @@
+target/
+.git/
+.gitignore
+*.md
+.idea/
+*.iml
+.metals/
+.bloop/
+**/node_modules/

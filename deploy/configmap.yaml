@@ -1,0 +1,9 @@
+# Optional: default config for the replay API (non-sensitive).
+# Job-level params (e.g. kafka_bootstrap_servers) can override these.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replay-api-config
+data:
+  # Uncomment and set if you want default Kafka for jobs when using in-cluster Kafka:
+  # KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
