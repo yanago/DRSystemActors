@@ -4,6 +4,7 @@ import com.example.replay.actors.messages.DataEmitterMessages;
 import com.example.replay.actors.messages.DataReaderMessages;
 import com.example.replay.actors.messages.JobManagerMessages;
 import com.example.replay.actors.messages.ReplayJobActorMessages;
+import com.example.replay.actors.messages.WorkDistributorMessages;
 import com.example.replay.model.ReplayJob;
 import com.example.replay.storage.ReplayJobRepository;
 import org.apache.pekko.actor.ActorRef;
@@ -27,6 +28,7 @@ public final class ReplayJobActor extends AbstractActor {
     private ReplayJob.ReplayJobStatus status = ReplayJob.ReplayJobStatus.PENDING;
     private Map<String, Object> parameters = Map.of();
     private ActorRef readerRef;
+    private ActorRef distributorRef;
     private ActorRef emitterRef;
 
     private ReplayJobActor(String jobId, ReplayJobRepository repository) {
@@ -40,8 +42,24 @@ public final class ReplayJobActor extends AbstractActor {
 
     @Override
     public void preStart() {
-        readerRef = getContext().actorOf(DataReaderActor.props(jobId), "reader");
         emitterRef = getContext().actorOf(DataEmitterActor.props(jobId), "emitter");
+        readerRef = getContext().actorOf(DataReaderActor.props(jobId), "reader");
+        distributorRef = getContext().actorOf(WorkDistributorActor.props(jobId, emitterRef), "distributor");
+    }
+
+    private static boolean usePartitionAwareDistribution(Map<String, Object> params) {
+        if (params == null) return false;
+        if (Boolean.TRUE.equals(params.get("partition_aware"))) return true;
+        Object w = params.get("worker_count");
+        if (w instanceof Number n && n.intValue() > 1) return true;
+        return false;
+    }
+
+    private static int workerCount(Map<String, Object> params) {
+        if (params == null) return 4;
+        Object w = params.get("worker_count");
+        if (w instanceof Number n) return Math.max(1, n.intValue());
+        return 4;
     }
 
     @Override
@@ -54,6 +72,7 @@ public final class ReplayJobActor extends AbstractActor {
                 .match(ReplayJobActorMessages.Cancel.class, this::onCancel)
                 .match(ReplayJobActorMessages.GetStatus.class, this::onGetStatus)
                 .match(DataReaderMessages.BatchRead.class, this::onBatchRead)
+                .match(WorkDistributorMessages.AllWorkComplete.class, this::onAllWorkComplete)
                 .match(DataEmitterMessages.BatchEmitted.class, msg -> { /* ack from emitter; optional back-pressure */ })
                 .matchAny(msg -> log.warning("Unhandled message: {}", msg))
                 .build();
@@ -67,13 +86,21 @@ public final class ReplayJobActor extends AbstractActor {
         this.parameters = msg.parameters() != null ? msg.parameters() : Map.of();
         status = ReplayJob.ReplayJobStatus.RUNNING;
         saveJob();
-        readerRef.tell(new DataReaderMessages.StartReading(parameters), getSelf());
+        if (usePartitionAwareDistribution(parameters)) {
+            distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
+        } else {
+            readerRef.tell(new DataReaderMessages.StartReading(parameters), getSelf());
+        }
         log.info("Job [{}] started", jobId);
     }
 
     private void onStart(ReplayJobActorMessages.Start msg) {
         if (status == ReplayJob.ReplayJobStatus.PENDING) {
-            readerRef.tell(new DataReaderMessages.StartReading(parameters), getSelf());
+            if (usePartitionAwareDistribution(parameters)) {
+                distributorRef.tell(new WorkDistributorMessages.StartDistribution(parameters, workerCount(parameters)), getSelf());
+            } else {
+                readerRef.tell(new DataReaderMessages.StartReading(parameters), getSelf());
+            }
             status = ReplayJob.ReplayJobStatus.RUNNING;
             saveJob();
             log.info("Job [{}] started", jobId);
@@ -84,7 +111,11 @@ public final class ReplayJobActor extends AbstractActor {
         if (status == ReplayJob.ReplayJobStatus.RUNNING) {
             status = ReplayJob.ReplayJobStatus.PAUSED;
             saveJob();
-            readerRef.tell(new DataReaderMessages.PauseReading(), getSelf());
+            if (usePartitionAwareDistribution(parameters)) {
+                distributorRef.tell(new WorkDistributorMessages.PauseDistribution(), getSelf());
+            } else {
+                readerRef.tell(new DataReaderMessages.PauseReading(), getSelf());
+            }
             log.info("Job [{}] paused", jobId);
         }
     }
@@ -93,7 +124,11 @@ public final class ReplayJobActor extends AbstractActor {
         if (status == ReplayJob.ReplayJobStatus.PAUSED) {
             status = ReplayJob.ReplayJobStatus.RUNNING;
             saveJob();
-            readerRef.tell(new DataReaderMessages.ResumeReading(), getSelf());
+            if (usePartitionAwareDistribution(parameters)) {
+                distributorRef.tell(new WorkDistributorMessages.ResumeDistribution(), getSelf());
+            } else {
+                readerRef.tell(new DataReaderMessages.ResumeReading(), getSelf());
+            }
             log.info("Job [{}] resumed", jobId);
         }
     }
@@ -104,9 +139,22 @@ public final class ReplayJobActor extends AbstractActor {
         }
         status = ReplayJob.ReplayJobStatus.CANCELLED;
         saveJob();
-        readerRef.tell(new DataReaderMessages.StopReading(), getSelf());
+        if (usePartitionAwareDistribution(parameters)) {
+            distributorRef.tell(new WorkDistributorMessages.CancelDistribution(), getSelf());
+        } else {
+            readerRef.tell(new DataReaderMessages.StopReading(), getSelf());
+        }
         emitterRef.tell(new DataEmitterMessages.StopEmitting(), getSelf());
         log.info("Job [{}] cancelled", jobId);
+    }
+
+    private void onAllWorkComplete(WorkDistributorMessages.AllWorkComplete msg) {
+        if (status != ReplayJob.ReplayJobStatus.CANCELLED && status != ReplayJob.ReplayJobStatus.FAILED) {
+            status = ReplayJob.ReplayJobStatus.COMPLETED;
+            log.info("Job [{}] completed (distributed)", jobId);
+        }
+        saveJob();
+        emitterRef.tell(new DataEmitterMessages.StopEmitting(), getSelf());
     }
 
     private void onGetStatus(ReplayJobActorMessages.GetStatus msg) {
