@@ -18,6 +18,7 @@ com/example/replay/actors/messages/ReplayJobActorMessages$Pause.class
 com/example/replay/kafka/package-info.class
 com/example/replay/package-info.class
 com/example/replay/actors/messages/ReplayJobActorMessages$Run.class
+com/example/replay/datalake/SecurityEventParquetGenerator.class
 com/example/replay/storage/package-info.class
 com/example/replay/datalake/ParquetEventReader.class
 com/example/replay/actors/messages/JobManagerMessages.class
@@ -56,6 +57,7 @@ com/example/replay/actors/messages/ReplayJobActorMessages$Start.class
 com/example/replay/api/CreateReplayJobResponse.class
 com/example/replay/actors/messages/DataReaderMessages.class
 com/example/replay/util/package-info.class
+com/example/replay/datalake/SecurityEventParquetGenerator$RecordSpec.class
 com/example/replay/model/package-info.class
 com/example/replay/api/ValidationResult.class
 com/example/replay/actors/messages/ReplayJobActorMessages.class

@@ -17,6 +17,7 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ParquetEventReader.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ReplayEventSource.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ReplayEventSourceFactory.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/SecurityEventParquetGenerator.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/SimulatedEventCatalog.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/kafka/package-info.java
