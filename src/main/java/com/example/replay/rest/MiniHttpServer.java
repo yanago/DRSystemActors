@@ -71,7 +71,14 @@ public final class MiniHttpServer implements Runnable, AutoCloseable {
      * Creates a server with repository from env: use Postgres when REPLAY_JDBC_URL is set, else in-memory.
      */
     public static MiniHttpServer createWithConfiguredStorage(int port) {
-        Optional<DataSource> ds = DataSourceConfig.createAndMigrate();
+        Optional<DataSource> ds;
+        try {
+            ds = DataSourceConfig.createAndMigrate();
+        } catch (Exception e) {
+            // Flyway or JDBC may reject unsupported PostgreSQL versions; fall back to in-memory.
+            System.err.println("Postgres/Flyway configuration failed, falling back to in-memory job repository: " + e.getMessage());
+            ds = Optional.empty();
+        }
         ReplayJobRepository repo = ds.isPresent()
                 ? new PostgresReplayJobRepository(ds.get())
                 : new InMemoryReplayJobRepository();
