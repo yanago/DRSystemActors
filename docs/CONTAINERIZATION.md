@@ -1,12 +1,20 @@
-# Containerization and Kubernetes (minikube / kind)
+# Containerization and Kubernetes (minikube / kind / k3s)
 
-This document describes how to build Docker images for the Replay API server, run the stack on minikube or kind, and test end-to-end locally.
+This document describes how to build Docker images for the Replay API server, run the stack on **minikube**, **kind**, **k3s**, or similar Kubernetes clusters, and test end-to-end locally.
+
+## Requirements compliance
+
+- **Must run on Kubernetes (minikube, kind, k3s, or similar)** — Yes. All runtime components are deployed via standard Kubernetes manifests in `deploy/`. The same manifests work on minikube, kind, k3s, and other Kubernetes clusters.
+- **All components must be containerized** — Yes.
+  - **Replay API**: Custom image built from `Dockerfile` (tag `replay-api:latest`), run as a Deployment.
+  - **PostgreSQL**: Containerized via official image `postgres:16-alpine` (Deployment + PVC).
+  - **Kafka** (optional): Containerized via `bitnami/kafka:3.7` (Deployment). Omit if using an external Kafka.
 
 ## Prerequisites
 
-- Docker (for building images and for minikube/kind)
+- Docker (for building images and for minikube/kind/k3s)
 - kubectl
-- **minikube** or **kind** (Kubernetes in Docker)
+- **minikube**, **kind**, or **k3s** (or another Kubernetes cluster)
 - (Optional) kustomize
 
 ## 1. Build the API server image
@@ -133,7 +141,26 @@ kubectl port-forward svc/replay-api 8080:80
 # Then run the same curl commands as above.
 ```
 
-## 4. Configuration
+## 4. Run on k3s (or similar)
+
+k3s and other standard Kubernetes clusters use the same manifests. Build the API image, load or push it so the cluster can pull it, then apply:
+
+```bash
+# If using k3d (k3s in Docker): create cluster and load image
+k3d cluster create replay
+docker build -t replay-api:latest .
+k3d image import replay-api:latest -c replay
+
+# Or with plain k3s: build and push to a registry the cluster can pull from,
+# then set image in deploy/replay-api-deployment.yaml to your registry URL.
+
+kubectl apply -f deploy/
+kubectl get pods -w
+kubectl port-forward svc/replay-api 8080:80
+# Then run the same curl commands as in section 2.
+```
+
+## 5. Configuration
 
 ### API server environment
 
@@ -156,13 +183,13 @@ These are provided via the `replay-api-secret` Secret in `deploy/secret.yaml`. T
 - Service DNS name: `kafka:9092`. In job parameters use `kafka_bootstrap_servers: "kafka:9092"` and `destination: "kafka"` when using the in-cluster Kafka.
 - Omit `deploy/kafka-deployment.yaml` if you use an external Kafka; set `kafka_bootstrap_servers` in job params to your external broker list.
 
-## 5. Resource limits (summary)
+## 6. Resource limits (summary)
 
 - **replay-api:** requests 256Mi/100m CPU, limits 512Mi/1000m; liveness/readiness on `/health`.
 - **postgres:** requests 128Mi/100m, limits 512Mi/500m.
 - **kafka:** requests 256Mi/100m, limits 512Mi/500m.
 
-## 6. Teardown
+## 7. Teardown
 
 **minikube:**
 
@@ -178,7 +205,7 @@ kubectl delete -f deploy/
 kind delete cluster --name replay
 ```
 
-## 7. Troubleshooting
+## 8. Troubleshooting
 
 - **ImagePullBackOff for replay-api:** Build the image inside the cluster’s Docker (e.g. `eval $(minikube docker-env)` then `docker build -t replay-api:latest .`) or push to a registry and set `imagePullPolicy` / image name in `replay-api-deployment.yaml`.
 - **Postgres not ready:** Ensure `replay-db-secret` exists and Postgres pod has the PVC bound (`kubectl get pvc`).
