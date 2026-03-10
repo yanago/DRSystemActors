@@ -18,11 +18,7 @@ spec:
     spec:
       containers:
         - name: kafka
-<<<<<<< HEAD
-          image: bitnami/kafka:3.7.0
-=======
           image: bitnamilegacy/kafka:3.7.0
->>>>>>> 30e0900 (Update Kafka deployment image to use legacy version 3.7.0)
           ports:
             - containerPort: 9092
               name: kafka
