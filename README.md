@@ -5,6 +5,7 @@ Replay/DR API and job orchestration (Apache Pekko, Java 17).
 ## Documentation
 
 - **[OpenAPI spec](openapi.yaml)** — REST API: health, jobs CRUD, lifecycle (start/pause/resume/cancel), status, metrics.
+- **[System design](docs/DESIGN.md)** — Architecture overview, API design, data strategy, key trade-offs, and future work.
 - **[Architecture & partitioning](docs/ARCHITECTURE.md)** — High-level design, actor hierarchy, partitioning strategy, job parameters.
 - **[20-minute demo](docs/DEMO-WALKTHROUGH.md)** — Step-by-step walkthrough: run server, create/start jobs, status/metrics, pause/resume/cancel, partitioning.
 - **[Containerization](docs/CONTAINERIZATION.md)** — Docker and Kubernetes (minikube/kind), end-to-end testing.
