@@ -11,6 +11,7 @@ com/example/replay/api/CreateReplayJobValidatorTest.class
 com/example/replay/datalake/SimulatedEventCatalogTest.class
 com/example/replay/actors/JobManagerTest$4.class
 com/example/replay/actors/JobManagerTest$2.class
+com/example/replay/datalake/IcebergEventReaderTest.class
 com/example/replay/actors/LargeScaleReplayJobTest$1.class
 com/example/replay/rest/MiniHttpServerTest.class
 com/example/replay/model/SecurityEventTest.class

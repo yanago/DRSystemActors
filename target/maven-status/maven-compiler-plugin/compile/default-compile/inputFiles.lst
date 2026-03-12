@@ -19,6 +19,8 @@
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/ValidationResult.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/api/package-info.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/EventBatch.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/IcebergEventReader.java
+/Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/IcebergPartitionMetadata.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ParquetEventReader.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/ParquetPartitionMetadata.java
 /Users/vaskoyordanov/DRSystemActors/src/main/java/com/example/replay/datalake/PartitionInfo.java
