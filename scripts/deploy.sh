@@ -4,12 +4,12 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGE_NAME="${IMAGE_NAME:-replay-api:latest}"
 API_PORT="${API_PORT:-18080}"
-WITH_KAFKA="${WITH_KAFKA:-false}"
+WITH_KAFKA="${WITH_KAFKA:-true}"
 SKIP_BUILD="${SKIP_BUILD:-false}"
 
 usage() {
   cat <<'EOF'
-Usage: scripts/deploy.sh [--with-kafka] [--skip-build]
+Usage: scripts/deploy.sh [--without-kafka] [--skip-build]
 
 End-to-end deploy helper for local Kubernetes workflows.
 
@@ -25,7 +25,7 @@ What it does:
 Environment variables:
   IMAGE_NAME   Docker image tag to build/load/apply (default: replay-api:latest)
   API_PORT     Local port for temporary health-check port-forward (default: 18080)
-  WITH_KAFKA   true|false, deploy optional Kafka (default: false)
+  WITH_KAFKA   true|false, deploy optional Kafka (default: true)
   SKIP_BUILD   true|false, skip Maven and Docker build steps (default: false)
 EOF
 }
@@ -82,12 +82,12 @@ trap cleanup EXIT
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --with-kafka)
-      WITH_KAFKA=true
-      shift
-      ;;
     --skip-build)
       SKIP_BUILD=true
+      shift
+      ;;
+    --without-kafka)
+      WITH_KAFKA=false
       shift
       ;;
     -h|--help)
