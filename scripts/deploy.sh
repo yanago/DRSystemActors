@@ -9,14 +9,15 @@ SKIP_BUILD="${SKIP_BUILD:-false}"
 
 usage() {
   cat <<'EOF'
-Usage: scripts/deplpy.sh [--with-kafka] [--skip-build]
+Usage: scripts/deploy.sh [--with-kafka] [--skip-build]
 
 End-to-end deploy helper for local Kubernetes workflows.
 
 What it does:
   1. Builds the application JAR with Maven
-  2. Builds the Docker image (default: replay-api:latest)
-  3. Loads the image into minikube if minikube is available and running
+  2. Builds the container image (default: replay-api:latest)
+  3. If minikube is running, builds directly into minikube's image store
+     (or loads the image when built locally)
   4. Applies Kubernetes manifests in deploy/
   5. Waits for Postgres and replay-api rollouts
   6. Runs a temporary port-forward and health check
@@ -38,6 +39,10 @@ require_cmd() {
     echo "Required command not found: $1" >&2
     exit 1
   }
+}
+
+docker_available() {
+  docker info >/dev/null 2>&1
 }
 
 wait_for_port() {
@@ -105,25 +110,52 @@ require_cmd python3
 
 cd "${ROOT_DIR}"
 
+MINIKUBE_RUNNING=false
+if command -v minikube >/dev/null 2>&1; then
+  if minikube status >/dev/null 2>&1; then
+    MINIKUBE_RUNNING=true
+  fi
+fi
+
 if [[ "${SKIP_BUILD}" != "true" ]]; then
   log "Building application JAR"
   mvn -q package -DskipTests
 
-  log "Building Docker image ${IMAGE_NAME}"
-  docker build -t "${IMAGE_NAME}" .
+  if [[ "${MINIKUBE_RUNNING}" == "true" ]]; then
+    log "Building image directly in minikube: ${IMAGE_NAME}"
+    minikube image build -t "${IMAGE_NAME}" .
+  else
+    if ! docker_available; then
+      cat >&2 <<'EOF'
+Docker is not reachable from this shell.
+
+If you previously ran 'eval $(minikube docker-env)', reset your shell first:
+  eval "$(minikube docker-env -u)"
+
+Then rerun:
+  scripts/deploy.sh
+EOF
+      exit 1
+    fi
+
+    log "Building Docker image ${IMAGE_NAME}"
+    docker build -t "${IMAGE_NAME}" .
+  fi
 else
   log "Skipping Maven and Docker build"
 fi
 
-if command -v minikube >/dev/null 2>&1; then
-  if minikube status >/dev/null 2>&1; then
-    log "Loading image into minikube: ${IMAGE_NAME}"
+if [[ "${MINIKUBE_RUNNING}" == "true" ]]; then
+  if [[ "${SKIP_BUILD}" == "true" ]]; then
+    log "Loading existing image into minikube: ${IMAGE_NAME}"
     minikube image load "${IMAGE_NAME}"
-  else
-    log "Minikube is installed but not running; skipping minikube image load"
   fi
 else
-  log "Minikube not found; if your cluster cannot see ${IMAGE_NAME}, load/push it manually"
+  if command -v minikube >/dev/null 2>&1; then
+    log "Minikube is installed but not running; skipping minikube image integration"
+  else
+    log "Minikube not found; if your cluster cannot see ${IMAGE_NAME}, load/push it manually"
+  fi
 fi
 
 log "Applying Kubernetes secrets and storage"
