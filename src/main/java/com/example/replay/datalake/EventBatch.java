@@ -12,7 +12,10 @@ public record EventBatch(List<Object> events, boolean lastBatch) {
     public static final String SOURCE_TYPE_KEY = "source_type";
     public static final String SOURCE_TYPE_SIMULATED = "simulated";
     public static final String SOURCE_TYPE_PARQUET = "parquet";
+    public static final String SOURCE_TYPE_ICEBERG = "iceberg";
     public static final String PARQUET_PATH_KEY = "parquet_path";
+    public static final String ICEBERG_TABLE_PATH_KEY = "iceberg_table_path";
+    public static final String ICEBERG_PARTITION_FIELD_KEY = "iceberg_partition_field";
     public static final String PARTITION_DAY_KEY = "partition_day";
 
     public EventBatch {

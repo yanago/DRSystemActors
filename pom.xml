@@ -233,6 +233,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <!-- Java 23+: allow Hadoop/Hive UGI getSubject for local Parquet/Iceberg tests -->
+                    <argLine>-Djava.security.manager=allow</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -243,6 +247,8 @@
                     <arguments>
                         <argument>8080</argument>
                     </arguments>
+                    <!-- Java 23+: allow Hadoop/Hive UGI getSubject for local Parquet/Iceberg access -->
+                    <jvmArguments>-Djava.security.manager=allow</jvmArguments>
                 </configuration>
             </plugin>
             <!-- Fat JAR for container / distribution -->

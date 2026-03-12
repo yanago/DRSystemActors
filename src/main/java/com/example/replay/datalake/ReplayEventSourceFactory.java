@@ -11,9 +11,10 @@ public final class ReplayEventSourceFactory {
     }
 
     /**
-     * Creates a source from config. source_type: "simulated" (default) or "parquet".
+     * Creates a source from config. source_type: "simulated" (default), "parquet", or "iceberg".
      * Simulated: batch_size, total_count, cid_prefix.
      * Parquet: parquet_path, batch_size, partition_day (optional).
+     * Iceberg: iceberg_table_path, batch_size, partition_day (optional), iceberg_partition_field (optional).
      */
     public static ReplayEventSource create(Map<String, Object> config) {
         return createForWorkPacket(config != null ? config : Map.of(), null);
@@ -38,6 +39,18 @@ public final class ReplayEventSourceFactory {
                 return ParquetEventReader.fromConfig(cfg);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to create Parquet source: " + e.getMessage(), e);
+            }
+        }
+        if (EventBatch.SOURCE_TYPE_ICEBERG.equals(sourceType)) {
+            try {
+                if (packet != null && !packet.getPartitionId().isEmpty() && !"default".equals(packet.getPartitionId())) {
+                    Map<String, Object> scoped = new java.util.HashMap<>(cfg);
+                    scoped.put(EventBatch.PARTITION_DAY_KEY, packet.getPartitionId());
+                    return IcebergEventReader.fromConfig(scoped);
+                }
+                return IcebergEventReader.fromConfig(cfg);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to create Iceberg source: " + e.getMessage(), e);
             }
         }
         if (packet != null && packet.isRange() && packet.getStartOffset() != null && packet.getEndOffset() != null) {

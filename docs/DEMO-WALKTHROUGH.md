@@ -132,7 +132,15 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
     - **REST**: `destination: rest`, optional `rest_url` (omit or `http://simulate` for in-memory).
     - **Kafka**: `destination: kafka`, `kafka_topic`, `kafka_bootstrap_servers`. Events are partitioned by `cid` so per-customer order is preserved.
 
-17. **List jobs again**
+17. **Optional Iceberg-backed replay**
+    ```bash
+    curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
+      -H "Content-Type: application/json" \
+      -d '{"name":"iceberg-demo","parameters":{"source":"iceberg","source_type":"iceberg","iceberg_table_path":"/tmp/iceberg-table","iceberg_partition_field":"day","partition_day":"2025-03-01","batch_size":500,"destination":"rest"}}'
+    ```
+    Explain: the replay path can now plan files from a Hadoop-table Apache Iceberg table, optionally prune by the configured partition field, and emit records through the same reader/distributor/emitter pipeline.
+
+18. **List jobs again**
     ```bash
     curl -s http://localhost:8080/api/v1/replay/jobs | jq 'length'
     ```
@@ -142,17 +150,17 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
 
 ## Minute 18–20: Wrap-up
 
-18. **Recap**
+19. **Recap**
     - **REST**: Health, create/list/get jobs, lifecycle (start/pause/resume/cancel), status, metrics.
     - **Architecture**: JobManager → ReplayJobActor → DataReader or WorkDistributor + DataEmitter; optional Postgres and Kafka.
-    - **Partitioning**: Partition metadata (Parquet days or simulated day/skew) → work packets (sorted by size) → workers; Kafka output by cid.
+    - **Partitioning**: Partition metadata (Iceberg/Parquet days or simulated day/skew) → work packets (sorted by size) → workers; Kafka output by cid.
 
-19. **Point to more docs**
+20. **Point to more docs**
     - **OpenAPI**: `openapi.yaml` for full API spec.
     - **Architecture**: `docs/ARCHITECTURE.md` for partitioning strategy and diagrams.
     - **Containerization**: `docs/CONTAINERIZATION.md` for Docker and Kubernetes (minikube/kind).
 
-20. **Optional**: Run tests or show Parquet event generator
+21. **Optional**: Run tests or show Parquet event generator
     ```bash
     mvn -q test -Dtest=MiniHttpServerTest
     # Or generate Parquet data (see README / generate-events profile)
