@@ -307,10 +307,11 @@ This approach favors operational continuity over strict failure propagation duri
 
 ### 4.1 Source partitioning strategy
 
-The source side supports two broad modes:
+The source side supports three practical input modes:
 
-- **single-path reading** for small or simple jobs
-- **partition-aware distribution** for larger, skewed, or parallel jobs
+- **simulated** input for local development and scale testing
+- **Parquet-backed** input for partitioned file replay
+- **Iceberg-backed** input for Hadoop-table style Iceberg tables, planned through Iceberg metadata and read as data files in batches
 
 Partitioning inputs are represented as `PartitionInfo` with:
 
@@ -328,6 +329,8 @@ This is a practical default because:
 - replay workloads are often time-window based
 - time partitioning aligns with operational slicing and file organization
 - it provides a good unit for parallelism without requiring global indexing
+
+For Iceberg-backed inputs, the current implementation plans files through the Iceberg API and groups work by the configured partition field, defaulting to `day` when present.
 
 For simulated test data, two virtual partitioning strategies are supported:
 

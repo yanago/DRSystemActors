@@ -37,6 +37,13 @@ public final class WorkPacketFactory {
                 throw new RuntimeException("Parquet partition metadata: " + e.getMessage(), e);
             }
         }
+        if (EventBatch.SOURCE_TYPE_ICEBERG.equals(sourceType)) {
+            try {
+                return IcebergPartitionMetadata.getPartitionsFromConfig(config);
+            } catch (Exception e) {
+                throw new RuntimeException("Iceberg partition metadata: " + e.getMessage(), e);
+            }
+        }
         return new SimulatedPartitionMetadata().getPartitions(config);
     }
 

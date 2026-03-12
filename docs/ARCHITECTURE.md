@@ -105,9 +105,13 @@ Partitioning is used to **split work by input partitions** and **balance load ac
 
 | Parameter | Description |
 |-----------|-------------|
-| `source` | Required. e.g. `simulated`, `parquet`. |
+| `source` | Required logical source label (commonly aligned with `source_type`). Examples: `simulated`, `parquet`, `iceberg`. |
+| `source_type` | Physical source implementation: `simulated`, `parquet`, or `iceberg`. Defaults to `simulated`. |
 | `total_count` | Number of events (simulated). |
 | `batch_size` | Events per batch. |
+| `parquet_path` | Base path for Parquet-backed replay. |
+| `iceberg_table_path` | Hadoop-table path for Apache Iceberg-backed replay. |
+| `iceberg_partition_field` | Optional Iceberg partition field used for pruning (default `day`). |
 | `destination` | `rest` or `kafka`. |
 | `partition_aware` | If true, use WorkDistributor path. |
 | `worker_count` | Number of workers in partition path (default 4). |

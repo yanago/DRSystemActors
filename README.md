@@ -2,6 +2,8 @@
 
 Replay/DR API and job orchestration (Apache Pekko, Java 17).
 
+Supported replay inputs today include simulated data, partitioned Parquet files, and Hadoop-table Apache Iceberg tables.
+
 ## Documentation
 
 - **[OpenAPI spec](openapi.yaml)** — REST API: health, jobs CRUD, lifecycle (start/pause/resume/cancel), status, metrics.
