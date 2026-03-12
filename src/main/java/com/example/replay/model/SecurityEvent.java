@@ -14,7 +14,7 @@ public final class SecurityEvent {
 
     private final String cid;
     private final Instant eventTimestamp;
-    private final Instant eventTime;
+    private final long eventTime;
     private final String eventType;
     private final String eventId;
 
@@ -22,12 +22,12 @@ public final class SecurityEvent {
     public SecurityEvent(
             @JsonProperty(value = "cid", required = true) String cid,
             @JsonProperty(value = "event_timestamp", required = true) Instant eventTimestamp,
-            @JsonProperty(value = "event_time", required = true) Instant eventTime,
+            @JsonProperty(value = "event_time", required = true) long eventTime,
             @JsonProperty(value = "event_type", required = true) String eventType,
             @JsonProperty(value = "event_id", required = true) String eventId) {
         this.cid = Objects.requireNonNull(cid, "cid");
         this.eventTimestamp = Objects.requireNonNull(eventTimestamp, "event_timestamp");
-        this.eventTime = Objects.requireNonNull(eventTime, "event_time");
+        this.eventTime = eventTime;
         this.eventType = Objects.requireNonNull(eventType, "event_type");
         this.eventId = Objects.requireNonNull(eventId, "event_id");
     }
@@ -43,7 +43,7 @@ public final class SecurityEvent {
     }
 
     @JsonProperty("event_time")
-    public Instant getEventTime() {
+    public long getEventTime() {
         return eventTime;
     }
 
@@ -62,9 +62,9 @@ public final class SecurityEvent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SecurityEvent that = (SecurityEvent) o;
-        return Objects.equals(cid, that.cid)
+        return eventTime == that.eventTime
+                && Objects.equals(cid, that.cid)
                 && Objects.equals(eventTimestamp, that.eventTimestamp)
-                && Objects.equals(eventTime, that.eventTime)
                 && Objects.equals(eventType, that.eventType)
                 && Objects.equals(eventId, that.eventId);
     }

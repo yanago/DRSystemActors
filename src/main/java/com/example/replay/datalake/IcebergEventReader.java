@@ -149,8 +149,15 @@ public final class IcebergEventReader implements ReplayEventSource {
             return null;
         }
         Map<String, Object> map = new LinkedHashMap<>();
-        record.getSchema().getFields().forEach(field -> map.put(field.name(), record.get(field.name())));
+        record.getSchema().getFields().forEach(field -> map.put(field.name(), normalizeValue(record.get(field.name()))));
         return map;
+    }
+
+    private static Object normalizeValue(Object value) {
+        if (value instanceof CharSequence chars) {
+            return chars.toString();
+        }
+        return value;
     }
 
     @Override

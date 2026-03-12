@@ -166,6 +166,9 @@ log "Deploying PostgreSQL"
 kubectl apply -f deploy/postgres-deployment.yaml
 kubectl apply -f deploy/postgres-service.yaml
 
+log "Waiting for Postgres rollout"
+kubectl rollout status deployment/postgres --timeout=180s
+
 log "Deploying replay API"
 kubectl apply -f deploy/replay-api-deployment.yaml
 
@@ -173,11 +176,8 @@ if [[ "${WITH_KAFKA}" == "true" ]]; then
   log "Deploying optional Kafka"
   kubectl apply -f deploy/kafka-deployment.yaml
 else
-  log "Skipping Kafka deployment (use --with-kafka to enable)"
+  log "Skipping Kafka deployment"
 fi
-
-log "Waiting for Postgres rollout"
-kubectl rollout status deployment/postgres --timeout=180s
 
 log "Waiting for replay-api rollout"
 kubectl rollout status deployment/replay-api --timeout=180s

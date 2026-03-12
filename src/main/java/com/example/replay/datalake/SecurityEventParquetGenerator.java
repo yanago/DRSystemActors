@@ -8,8 +8,10 @@ import org.apache.parquet.avro.AvroParquetWriter;
 import org.apache.parquet.hadoop.ParquetWriter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.UUID;
 
 /**
  * Generates 50k+ security event records with customer skew and writes them
@@ -43,7 +46,7 @@ public final class SecurityEventParquetGenerator {
               "name": "SecurityEvent",
               "fields": [
                 {"name": "cid", "type": "string"},
-                {"name": "event_timestamp", "type": "long"},
+                {"name": "event_timestamp", "type": "string"},
                 {"name": "event_time", "type": "long"},
                 {"name": "event_type", "type": "string"},
                 {"name": "event_id", "type": "string"}
@@ -51,7 +54,9 @@ public final class SecurityEventParquetGenerator {
             }
             """;
 
-    private static final String[] EVENT_TYPES = {"LOGIN", "LOGOUT", "ACCESS", "DENIED", "SESSION_START", "SESSION_END"};
+    private static final String[] EVENT_TYPES = {
+            "ProcessStart", "NetworkConnect", "FileAccess", "ProcessExit", "DnsQuery", "AuthenticationSuccess"
+    };
     private static final int DEFAULT_TOTAL_RECORDS = 50_000;
     private static final int DEFAULT_NUM_DAYS = 7;
     private static final int NUM_CUSTOMERS = 50;
@@ -65,7 +70,7 @@ public final class SecurityEventParquetGenerator {
     private final Schema avroSchema;
 
     public SecurityEventParquetGenerator(int totalRecords, int numDays, java.nio.file.Path outputDir) {
-        this.totalRecords = Math.max(totalRecords, 50_000);
+        this.totalRecords = Math.max(1, totalRecords);
         this.numDays = Math.max(1, numDays);
         this.outputDir = Objects.requireNonNull(outputDir);
         this.random = new Random(42);
@@ -93,8 +98,9 @@ public final class SecurityEventParquetGenerator {
             String eventType = EVENT_TYPES[random.nextInt(EVENT_TYPES.length)];
             long tsMillis = startDate.plusDays(dayIndex).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
                     + random.nextInt(86400_000);
+            String eventTimestamp = Instant.ofEpochMilli(tsMillis).toString();
             byDay.computeIfAbsent(dayKey, k -> new ArrayList<>())
-                    .add(new RecordSpec(cid, tsMillis, eventType, "evt-" + (eventIdBase + i)));
+                    .add(new RecordSpec(cid, eventTimestamp, tsMillis, eventType, deterministicEventId(cid, tsMillis, eventIdBase + i)));
         }
 
         Configuration conf = new Configuration();
@@ -112,7 +118,7 @@ public final class SecurityEventParquetGenerator {
     private List<String> customerIds() {
         List<String> ids = new ArrayList<>(NUM_CUSTOMERS);
         for (int i = 0; i < NUM_CUSTOMERS; i++) {
-            ids.add("cid-" + (i < 10 ? "0" + i : i));
+            ids.add("customer-" + String.format("%06d", i));
         }
         return ids;
     }
@@ -149,8 +155,8 @@ public final class SecurityEventParquetGenerator {
             for (RecordSpec r : records) {
                 GenericRecord record = builder
                         .set("cid", r.cid)
-                        .set("event_timestamp", r.timestampMillis)
-                        .set("event_time", r.timestampMillis)
+                        .set("event_timestamp", r.eventTimestamp)
+                        .set("event_time", r.eventTime)
                         .set("event_type", r.eventType)
                         .set("event_id", r.eventId)
                         .build();
@@ -159,8 +165,13 @@ public final class SecurityEventParquetGenerator {
         }
     }
 
+    private static String deterministicEventId(String cid, long timestampMillis, long index) {
+        String seed = cid + ":" + timestampMillis + ":" + index;
+        return UUID.nameUUIDFromBytes(seed.getBytes(StandardCharsets.UTF_8)).toString();
+    }
 
-    private record RecordSpec(String cid, long timestampMillis, String eventType, String eventId) {}
+
+    private record RecordSpec(String cid, String eventTimestamp, long eventTime, String eventType, String eventId) {}
 
     // --- CLI ---
 

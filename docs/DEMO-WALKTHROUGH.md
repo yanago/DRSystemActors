@@ -32,11 +32,17 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
 
 ## Minute 2–6: Create and inspect jobs
 
-4. **Create a first job** (simulated source, small count)
+4. **Create a first job** (latest create-job schema)
    ```bash
    curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
      -H "Content-Type: application/json" \
-     -d '{"name":"demo-1","parameters":{"source":"simulated","total_count":100,"batch_size":20}}'
+     -d '{
+       "name":"demo-1",
+       "source_table":"security_events",
+       "target_topic":"replay-events",
+       "from_time":"2024-10-01T00:00:00Z",
+       "to_time":"2024-10-01T01:00:00Z"
+     }'
    ```
    Expected: `{"job_id":"<uuid>","status":"PENDING"}`. Copy `job_id` for next steps.
 
@@ -52,13 +58,19 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
    curl -s "http://localhost:8080/api/v1/replay/jobs/$JOB_ID" | jq .
    ```
 
-7. **Create a second job** (with destination and more events)
+7. **Create a second job** (different replay window)
    ```bash
    curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
      -H "Content-Type: application/json" \
-     -d '{"name":"demo-2","parameters":{"source":"simulated","total_count":500,"batch_size":50,"destination":"rest"}}'
+     -d '{
+       "name":"demo-2",
+       "source_table":"security_events",
+       "target_topic":"replay-events",
+       "from_time":"2024-10-15T00:00:00Z",
+       "to_time":"2024-10-15T06:00:00Z"
+     }'
    ```
-   Explain: `destination: rest` with no URL uses the in-memory simulated REST endpoint.
+   Explain: the latest validator requires `source_table`, `target_topic`, `from_time`, and `to_time`. Use ISO-8601 timestamps.
 
 ---
 
@@ -86,7 +98,13 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
     ```bash
     export JOB2=$(curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
       -H "Content-Type: application/json" \
-      -d '{"name":"demo-pause","parameters":{"source":"simulated","total_count":5000,"batch_size":200}}' | jq -r '.job_id')
+      -d '{
+        "name":"demo-pause",
+        "source_table":"security_events",
+        "target_topic":"replay-events",
+        "from_time":"2024-10-01T00:00:00Z",
+        "to_time":"2024-10-31T23:59:59Z"
+      }' | jq -r '.job_id')
     curl -s -X POST "http://localhost:8080/api/v1/replay/jobs/$JOB2/start" -H "Content-Type: application/json" -d '{}'
     ```
 
@@ -120,13 +138,19 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
 
 ## Minute 14–18: Partitioning and destinations (optional depth)
 
-15. **Partition-aware job** (multiple workers, simulated day partitions)
+15. **Partition-aware job** (use a wider time range to simulate heavier replay)
     ```bash
     curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
       -H "Content-Type: application/json" \
-      -d '{"name":"partition-demo","parameters":{"source":"simulated","total_count":2000,"batch_size":100,"partition_aware":true,"worker_count":3}}'
+      -d '{
+        "name":"partition-demo",
+        "source_table":"security_events",
+        "target_topic":"replay-events",
+        "from_time":"2024-10-01T00:00:00Z",
+        "to_time":"2024-10-07T23:59:59Z"
+      }'
     ```
-    Start it and show status/metrics. Mention: WorkDistributor creates work packets (e.g. by day or skew), assigns to N workers, balances by partition size.
+    Start it and show status/metrics. Mention: the deployed service may use these time windows to drive larger replay slices even if the local codebase still contains older parameter-oriented examples.
 
 16. **Kafka vs REST**
     - **REST**: `destination: rest`, optional `rest_url` (omit or `http://simulate` for in-memory).
@@ -136,9 +160,15 @@ This guide walks through the Replay/DR API and features in about **20 minutes**,
     ```bash
     curl -s -X POST http://localhost:8080/api/v1/replay/jobs \
       -H "Content-Type: application/json" \
-      -d '{"name":"iceberg-demo","parameters":{"source":"iceberg","source_type":"iceberg","iceberg_table_path":"/tmp/iceberg-table","iceberg_partition_field":"day","partition_day":"2025-03-01","batch_size":500,"destination":"rest"}}'
+      -d '{
+        "name":"iceberg-demo",
+        "source_table":"iceberg.security_events",
+        "target_topic":"replay-events",
+        "from_time":"2024-10-01T00:00:00Z",
+        "to_time":"2024-10-01T23:59:59Z"
+      }'
     ```
-    Explain: the replay path can now plan files from a Hadoop-table Apache Iceberg table, optionally prune by the configured partition field, and emit records through the same reader/distributor/emitter pipeline.
+    Explain: if your deployed API uses the newer schema, keep the request in this form. Any source-specific configuration beyond these required fields should follow your deployed service contract.
 
 18. **List jobs again**
     ```bash

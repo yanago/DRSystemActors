@@ -35,8 +35,8 @@ class SimulatedRestDestinationTest {
         SimulatedRestDestination dest = new SimulatedRestDestination();
         Instant now = Instant.now();
         List<Object> events = List.of(
-                new SecurityEvent("cid-01", now, now, "LOGIN", "evt-1"),
-                new SecurityEvent("cid-02", now, now, "ACCESS", "evt-2")
+                new SecurityEvent("cid-01", now, now.toEpochMilli(), "LOGIN", "evt-1"),
+                new SecurityEvent("cid-02", now, now.toEpochMilli(), "ACCESS", "evt-2")
         );
         dest.sendBatch(events);
         assertEquals(2, dest.getReceivedCount());

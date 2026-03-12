@@ -95,7 +95,7 @@ public final class WorkDistributorActor extends AbstractActor {
             }
             return;
         }
-        if (packetQueue != null && !packetQueue.isEmpty()) {
+        if (!paused && packetQueue != null && !packetQueue.isEmpty()) {
             WorkPacket next = packetQueue.poll();
             busyCount++;
             getSender().tell(new WorkDistributorMessages.AssignPacket(jobId, next, distributorConfig), getSelf());
@@ -126,6 +126,7 @@ public final class WorkDistributorActor extends AbstractActor {
 
     private void onResume(WorkDistributorMessages.ResumeDistribution msg) {
         paused = false;
+        assignNextPackets();
     }
 
     private void onCancel(WorkDistributorMessages.CancelDistribution msg) {

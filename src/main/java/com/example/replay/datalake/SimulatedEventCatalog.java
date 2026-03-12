@@ -71,7 +71,7 @@ public final class SimulatedEventCatalog implements ReplayEventSource {
             SecurityEvent evt = new SecurityEvent(
                     cidPrefix + "-" + (idx % 100),
                     ts,
-                    ts,
+                    ts.toEpochMilli(),
                     "LOGIN",
                     "evt-" + idx
             );

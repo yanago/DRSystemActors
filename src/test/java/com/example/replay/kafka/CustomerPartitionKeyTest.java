@@ -13,7 +13,7 @@ class CustomerPartitionKeyTest {
     @Test
     void keyForSecurityEvent() {
         Instant now = Instant.now();
-        SecurityEvent evt = new SecurityEvent("cid-heavy-01", now, now, "LOGIN", "evt-1");
+        SecurityEvent evt = new SecurityEvent("cid-heavy-01", now, now.toEpochMilli(), "LOGIN", "evt-1");
         assertEquals("cid-heavy-01", CustomerPartitionKey.keyFor(evt));
     }
 

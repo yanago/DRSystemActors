@@ -124,8 +124,15 @@ public final class ParquetEventReader implements ReplayEventSource {
     private static Object genericRecordToMap(GenericRecord record) {
         if (record == null) return null;
         Map<String, Object> map = new LinkedHashMap<>();
-        record.getSchema().getFields().forEach(f -> map.put(f.name(), record.get(f.name())));
+        record.getSchema().getFields().forEach(f -> map.put(f.name(), normalizeValue(record.get(f.name()))));
         return map;
+    }
+
+    private static Object normalizeValue(Object value) {
+        if (value instanceof CharSequence chars) {
+            return chars.toString();
+        }
+        return value;
     }
 
     @Override
